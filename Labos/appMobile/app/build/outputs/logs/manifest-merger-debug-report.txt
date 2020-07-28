@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
 MERGED from [com.google.android.material:material:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d9fe90b20373e53cda14cf70a3a9d6b6/material-1.0.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/4458c9c05cd1e45f3462845bbb5f6a7c/appcompat-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.fragment:fragment:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/bbcbf6e10ae52a08d3f4cdfbe738c39d/fragment-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -12,8 +12,8 @@ MERGED from [androidx.recyclerview:recyclerview:1.0.0] /Users/claudecoulombe/.gr
 MERGED from [androidx.legacy:legacy-support-core-ui:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/f5ec57ec49d0a3e9add695de66a9078c/legacy-support-core-ui-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/df8a19ef163eaa8f3d3c8f24458897fd/coordinatorlayout-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [org.tensorflow:tensorflow-lite-support:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/253ce2f3b8906c92cf84d622d795e47d/jetified-tensorflow-lite-support-0.0.0-nightly/AndroidManifest.xml:2:1-5:12
-MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/2f4896d27f96ccc740e8a69a46cc51e5/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:2:1-12:12
-MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/01c296a297aa09242485b3d248e1facd/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:2:1-12:12
+MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/91abfabca53c5a43d094fc41b53bb2d7/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:2:1-12:12
+MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/29283846f7c13abf38e7f33d3ce824e0/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:2:1-12:12
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/18f5c1f0dcc08504bb6a1709d838cf6b/legacy-support-core-utils-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.vectordrawable:vectordrawable:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d5d8e5b76b66aa5a1f28a4c3ed5098de/vectordrawable-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/ebc8011c39d26c440b76466a9b971345/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -37,27 +37,27 @@ MERGED from [androidx.interpolator:interpolator:1.0.0] /Users/claudecoulombe/.gr
 MERGED from [androidx.lifecycle:lifecycle-livedata:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/c6f1e76c078a7e4f5288325854cab247/lifecycle-livedata-2.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/7282e00d74c6a6acf53f4bfd68421266/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/73114719268a97e9fd391905563b2ee9/core-runtime-2.0.0/AndroidManifest.xml:17:1-22:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
 	package
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:2:5-58
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:2:5-58
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
 	android:versionCode
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:1-28:12
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:1-28:12
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:1:11-69
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:1:11-69
 uses-sdk
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
 MERGED from [com.google.android.material:material:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d9fe90b20373e53cda14cf70a3a9d6b6/material-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [com.google.android.material:material:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d9fe90b20373e53cda14cf70a3a9d6b6/material-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/4458c9c05cd1e45f3462845bbb5f6a7c/appcompat-1.0.0/AndroidManifest.xml:20:5-44
@@ -74,10 +74,10 @@ MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/claudeco
 MERGED from [androidx.coordinatorlayout:coordinatorlayout:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/df8a19ef163eaa8f3d3c8f24458897fd/coordinatorlayout-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [org.tensorflow:tensorflow-lite-support:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/253ce2f3b8906c92cf84d622d795e47d/jetified-tensorflow-lite-support-0.0.0-nightly/AndroidManifest.xml:4:3-71
 MERGED from [org.tensorflow:tensorflow-lite-support:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/253ce2f3b8906c92cf84d622d795e47d/jetified-tensorflow-lite-support-0.0.0-nightly/AndroidManifest.xml:4:3-71
-MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/2f4896d27f96ccc740e8a69a46cc51e5/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
-MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/2f4896d27f96ccc740e8a69a46cc51e5/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
-MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/01c296a297aa09242485b3d248e1facd/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
-MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/01c296a297aa09242485b3d248e1facd/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
+MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/91abfabca53c5a43d094fc41b53bb2d7/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
+MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/91abfabca53c5a43d094fc41b53bb2d7/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
+MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/29283846f7c13abf38e7f33d3ce824e0/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
+MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/29283846f7c13abf38e7f33d3ce824e0/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:7:5-8:41
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/18f5c1f0dcc08504bb6a1709d838cf6b/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.legacy:legacy-support-core-utils:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/18f5c1f0dcc08504bb6a1709d838cf6b/legacy-support-core-utils-1.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.vectordrawable:vectordrawable:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d5d8e5b76b66aa5a1f28a4c3ed5098de/vectordrawable-1.0.0/AndroidManifest.xml:20:5-44
@@ -124,38 +124,38 @@ MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/claudecoul
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/7282e00d74c6a6acf53f4bfd68421266/lifecycle-livedata-core-2.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/73114719268a97e9fd391905563b2ee9/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.arch.core:core-runtime:2.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/73114719268a97e9fd391905563b2ee9/core-runtime-2.0.0/AndroidManifest.xml:20:5-44
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
 	android:targetSdkVersion
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-		MERGED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-		MERGED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:4:5-17
-		INJECTED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+		MERGED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+		MERGED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:4:5-17
+		INJECTED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml
 uses-permission#android.permission.CAMERA
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:6:5-65
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:6:5-65
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:6:22-62
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:6:22-62
 uses-feature#android.hardware.camera
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:8:5-60
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:8:5-60
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:8:19-57
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:8:19-57
 uses-feature#android.hardware.camera.autofocus
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:9:5-70
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:9:5-70
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:9:19-67
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:9:19-67
 application
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:11:5-27:19
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:11:5-27:19
 MERGED from [com.google.android.material:material:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d9fe90b20373e53cda14cf70a3a9d6b6/material-1.0.0/AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/d9fe90b20373e53cda14cf70a3a9d6b6/material-1.0.0/AndroidManifest.xml:22:5-20
-MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/2f4896d27f96ccc740e8a69a46cc51e5/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:10:5-20
-MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/2f4896d27f96ccc740e8a69a46cc51e5/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:10:5-20
-MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/01c296a297aa09242485b3d248e1facd/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:10:5-20
-MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/01c296a297aa09242485b3d248e1facd/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:10:5-20
+MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/91abfabca53c5a43d094fc41b53bb2d7/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:10:5-20
+MERGED from [org.tensorflow:tensorflow-lite:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/91abfabca53c5a43d094fc41b53bb2d7/jetified-tensorflow-lite-0.0.0-nightly/AndroidManifest.xml:10:5-20
+MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/29283846f7c13abf38e7f33d3ce824e0/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:10:5-20
+MERGED from [org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/29283846f7c13abf38e7f33d3ce824e0/jetified-tensorflow-lite-gpu-0.0.0-nightly/AndroidManifest.xml:10:5-20
 MERGED from [androidx.core:core:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/6d11613c3b6a00a9ea456b5609ec43f7/core-1.0.0/AndroidManifest.xml:22:5-89
 MERGED from [androidx.core:core:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/6d11613c3b6a00a9ea456b5609ec43f7/core-1.0.0/AndroidManifest.xml:22:5-89
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/5c19ca1a4638e9c78653f5d9bfebad33/versionedparcelable-1.0.0/AndroidManifest.xml:22:5-23:19
@@ -163,32 +163,32 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.0.0] /Users/clau
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.0.0] /Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/6d11613c3b6a00a9ea456b5609ec43f7/core-1.0.0/AndroidManifest.xml:22:18-86
 	android:supportsRtl
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:16:9-35
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:16:9-35
 	android:label
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:14:9-48
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:14:9-48
 	android:roundIcon
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:15:9-54
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:15:9-54
 	android:icon
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:13:9-43
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:13:9-43
 	android:allowBackup
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:12:9-35
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:12:9-35
 	android:theme
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:17:9-60
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:17:9-60
 activity#org.tensorflow.lite.examples.classification.ClassifierActivity
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:18:9-26:20
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:18:9-26:20
 	android:screenOrientation
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:21:13-49
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:21:13-49
 	android:label
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:20:13-52
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:20:13-52
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:19:13-47
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:19:13-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:22:13-25:29
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:22:13-25:29
 action#android.intent.action.MAIN
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:23:17-69
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:23:17-69
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:23:25-66
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:23:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:24:17-77
+ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:24:17-77
 	android:name
-		ADDED from /Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/AndroidManifest.xml:24:27-74
+		ADDED from /Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/AndroidManifest.xml:24:27-74

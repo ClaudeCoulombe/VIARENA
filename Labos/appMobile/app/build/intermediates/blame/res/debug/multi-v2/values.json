@@ -1,29 +1,27 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
-                    "source": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/res/values/strings.xml",
+                    "source": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/res/values/colors.xml",
                     "from": {
-                        "startLines": "13,5,1,2,12,3,4",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "873,558,16,145,802,307,489",
-                        "endLines": "17,10,1,2,12,3,4",
-                        "endColumns": "19,19,128,161,70,181,68",
-                        "endOffsets": "1016,796,140,302,868,484,553"
+                        "startLines": "4,2,3,6",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "164,55,107,216",
+                        "endColumns": "50,51,56,56",
+                        "endOffsets": "210,102,159,268"
                     },
                     "to": {
-                        "startLines": "2,7,469,470,471,472,473",
-                        "startColumns": "4,4,4,4,4,4,4",
-                        "startOffsets": "150,298,30677,30806,30968,31039,31221",
-                        "endLines": "6,12,469,470,471,472,473",
-                        "endColumns": "19,19,128,161,70,181,68",
-                        "endOffsets": "293,536,30801,30963,31034,31216,31285"
+                        "startLines": "139,140,141,142",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "8685,8736,8788,8845",
+                        "endColumns": "50,51,56,56",
+                        "endOffsets": "8731,8783,8840,8897"
                     }
                 },
                 {
-                    "source": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/res/values/styles.xml",
+                    "source": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/res/values/styles.xml",
                     "from": {
                         "startLines": "3",
                         "startColumns": "4",
@@ -39,6 +37,25 @@
                         "endLines": "488",
                         "endColumns": "12",
                         "endOffsets": "32357"
+                    }
+                },
+                {
+                    "source": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/res/values/strings.xml",
+                    "from": {
+                        "startLines": "13,5,1,2,12,3,4",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "873,558,16,145,802,307,489",
+                        "endLines": "17,10,1,2,12,3,4",
+                        "endColumns": "19,19,128,161,70,181,68",
+                        "endOffsets": "1016,796,140,302,868,484,553"
+                    },
+                    "to": {
+                        "startLines": "2,7,469,470,471,472,473",
+                        "startColumns": "4,4,4,4,4,4,4",
+                        "startOffsets": "150,298,30677,30806,30968,31039,31221",
+                        "endLines": "6,12,469,470,471,472,473",
+                        "endColumns": "19,19,128,161,70,181,68",
+                        "endOffsets": "293,536,30801,30963,31034,31216,31285"
                     }
                 },
                 {
@@ -77,23 +94,6 @@
                         "endLines": "22,2815,3641,3730",
                         "endColumns": "60,12,24,24",
                         "endOffsets": "1089,186168,232547,237758"
-                    }
-                },
-                {
-                    "source": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/res/values/colors.xml",
-                    "from": {
-                        "startLines": "4,2,3,6",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "164,55,107,216",
-                        "endColumns": "50,51,56,56",
-                        "endOffsets": "210,102,159,268"
-                    },
-                    "to": {
-                        "startLines": "139,140,141,142",
-                        "startColumns": "4,4,4,4",
-                        "startOffsets": "8685,8736,8788,8845",
-                        "endColumns": "50,51,56,56",
-                        "endOffsets": "8731,8783,8840,8897"
                     }
                 },
                 {
@@ -154,7 +154,7 @@
                     }
                 },
                 {
-                    "source": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/src/main/res/values/dimens.xml",
+                    "source": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/src/main/res/values/dimens.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",

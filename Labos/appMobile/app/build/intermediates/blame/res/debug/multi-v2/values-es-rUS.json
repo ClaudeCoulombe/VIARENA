@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/claudecoulombe/git/examples/lite/codelabs/flower_classification/android/start/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-es-rUS/values-es-rUS.xml",
+            "outputFile": "/Users/claudecoulombe/git/VIARENA/Labos/appMobile/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-es-rUS/values-es-rUS.xml",
             "map": [
                 {
                     "source": "/Users/claudecoulombe/.gradle/caches/transforms-2/files-2.1/6d11613c3b6a00a9ea456b5609ec43f7/core-1.0.0/res/values-es-rUS/values-es-rUS.xml",
