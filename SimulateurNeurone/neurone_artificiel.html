@@ -11,7 +11,7 @@
 	<!-- https://www.w3schools.com/howto/howto_css_two_columns.asp -->
 	<fieldset id="simulateur_neurone">
 		<legend id="titre_simulateur">Simulation d'un neurone artificiel</legend>
-		<br><br>
+		<br>
 		<div class="rangee">
 			<div class="colonne_1">
 				<span id="parties_du_simulateur_colonne_1">
@@ -139,7 +139,7 @@
 					  	</span>
 				  		<select id="choix_activation">
 					    	<option value="0">Choisir l'activation...</option>
-<!--					    <option value="echelon" selected>Échelon</option>  -->
+					    	<option value="echelon" selected>Échelon</option>  
 					    	<option value="sigmoide" selected>Courbe en S positive</option>
 					    	<option value="tanh">Courbe en S centr&eacute;e sur 0</option>
 					    	<option value="relu">Rampe droite &agrave; 45 degr&eacute;s</option>
@@ -170,25 +170,23 @@
 
 		<h1>Simulation d'un neurone artificiel</h1>
 
-		<p> De gauche &agrave; droite, le simulateur comporte d'abord un s&eacute;rie d'entr&eacute;es (ou signaux) repr&eacute;sent&eacute; par de petits boutons radios permettant de choisir entre 0 ou 1.<br/>&Agrave; chaque entr&eacute;e on associe un poids (la force du signal) repr&eacute;sent&eacute;e par une glissi&egrave;re avec l'ic&ocirc;ne d'halt&eacute;rophile.<br/>Pour simplifier, nous avons limit&eacute; notre neurone artificiel &agrave; trois entr&eacute;es: le bias et deux entr&eacute;es (entr&eacute;e_1 et entr&eacute;e_2).<br/>En r&eacute;alit&eacute;, un neurone artificiel peut comporter des milliers d'entr&eacute;es en plus du biais qui est g&eacute;n&eacute;ralement toujours pr&eacute;sent. Nous verrons plus tard &agrave; quoi sert le biais.</p>
+		<p> De gauche &agrave; droite, le simulateur comporte d'abord un s&eacute;rie d'entr&eacute;es (ou signaux) repr&eacute;sent&eacute; par de petits boutons radios permettant de choisir entre 0 ou 1. &Agrave; chaque entr&eacute;e on associe un poids (la force du signal) repr&eacute;sent&eacute;e par une glissi&egrave;re avec l'ic&ocirc;ne d'halt&eacute;rophile. Pour simplifier, nous avons limit&eacute; notre neurone artificiel &agrave; trois entr&eacute;es: le bias et deux entr&eacute;es (entr&eacute;e_1 et entr&eacute;e_2). En r&eacute;alit&eacute;, un neurone artificiel peut comporter des milliers d'entr&eacute;es en plus du biais qui est g&eacute;n&eacute;ralement toujours pr&eacute;sent. Nous verrons plus tard &agrave; quoi sert le biais.</p>
 
-		<p>Ces signaux avec leurs poids entrent ensuite dans le corps du neurone qui fait des calculs &agrave; partir de ces entr&eacute;es.<br>Les calculs se font en deux &eacute;tapes: une premi&egrave;re &eacute;tape est la somme pond&eacute;r&eacute;e des entr&eacute;es (repr&eacute;sent&eacute;e par le bouton avec un + rouge) et la deuxi&egrave;me &eacute;tape est l'activation du neurone (le bouton avec la courbe en S rouge).</p>
-
-		<p>La somme pond&eacute;r&eacute;e consiste &agrave; additionner la valeur de chaque entr&eacute;e qui est multipli&eacute;e par son poids associ&eacute;.<br/>Dans le cas de notre neurone simple, le calcul est: somme_pond&eacute;r&eacute;e = entr&eacute;e_1 x poids_1 + entr&eacute;e_2 x poids_2 + biais x poids_biais.</p> 
-
-		<p>Le calcul de l'activation prend le r&eacute;sultat du calcul pr&eacute;c&eacute;dent (i.e. la somme pond&eacute;r&eacute;e) et lui applique une fonction math&eacute;matique dite fonction d'activation.<br/>Il existe plusieurs fonctions d'activation diff&eacute;rentes et notre simulateur vous propose de choisir parmi les trois plus r&eacute;pandues (gr&acirc;ce &agrave; un menu &agrave; droite sous le corps du neurone) :<p> 
+		<p>Ces signaux avec leurs poids entrent ensuite dans le corps du neurone qui fait des calculs &agrave; partir de ces entr&eacute;es. Les calculs se font en deux &eacute;tapes: une premi&egrave;re &eacute;tape est la somme pond&eacute;r&eacute;e des entr&eacute;es (repr&eacute;sent&eacute;e par le bouton avec un + rouge) et la deuxi&egrave;me &eacute;tape est l'activation du neurone (le bouton avec la courbe en S rouge). La somme pond&eacute;r&eacute;e consiste &agrave; additionner la valeur de chaque entr&eacute;e qui est multipli&eacute;e par son poids associ&eacute;. Dans le cas de notre neurone simple, le calcul est: somme_pond&eacute;r&eacute;e = entr&eacute;e_1 x poids_1 + entr&eacute;e_2 x poids_2 + biais x poids_biais. Le calcul de l'activation prend le r&eacute;sultat du calcul pr&eacute;c&eacute;dent (i.e. la somme pond&eacute;r&eacute;e) et lui applique une fonction math&eacute;matique dite fonction d'activation. Il existe plusieurs fonctions d'activation diff&eacute;rentes et notre simulateur vous propose de choisir parmi les quatre plus r&eacute;pandues (gr&acirc;ce &agrave; un menu &agrave; droite sous le corps du neurone) :<p> 
 
 		<ol>
+			<li>L'&eacute;chelon qui produit des r&eacute;sultats entre 0 et 1 avec un seuil de 0.5 Il est caract&eacute;ris&eacute; par un brusque passage de 0 à 1 en z&eacute;ro.</li> 
+
 			<li>La courbe en S positive (ou sigmo&iuml;de) qui produit des r&eacute;sultats entre 0 et 1 avec un seuil de 0.5</li> 
 
 			<li>La courbe en S centr&eacute;e sur z&eacute;ro (ou tangente hyperbolique) qui donne un r&eacute;sultat entre -1 et +1 avec un seuil de 0.</li> 
 
-			<li>La rampe droite &agrave; 45 degr&eacute;s (ou unit&eacute; lin&eacute;aire rectifi&eacute;e) qui retourne un r&eacute;sultat entre 0 et +infini avec un seuil de 0.<br>Notez que l'unit&eacute; lin&eacute;aire rectifi&eacute;e (en anglais ReLU) est la fonction d'activation le plus souvent utilis&eacute;e dans les r&eacute;seaux de neurones profonds.</li> 
+			<li>La rampe droite &agrave; 45 degr&eacute;s (ou unit&eacute; lin&eacute;aire rectifi&eacute;e, en anglais ReLU) qui retourne un r&eacute;sultat entre 0 et +infini avec un seuil de 0.<br/>Notez que la rampe droite &agrave; 45 degr&eacute;s (ReLU) est la fonction d'activation la plus souvent utilis&eacute;e dans les r&eacute;seaux de neurones profonds.</li> 
 		</ol>
 
-		<p>Le r&eacute;sultat du calcul d'activation se retrouve &agrave; la sortie du neurone situ&eacute;e &agrave; l'extr&ecirc;me droite.<br/>De petits &eacute;clairs s'ajoutent pour indiquer que le neurone est d&eacute;clench&eacute;.</br>C'est-&agrave;-dire que la valeur de sa sortie d&eacute;passe un seuil de d&eacute;clenchement qui d&eacute;pend de la fonction d'activation et du type d'application.</p>
+		<p>Le r&eacute;sultat du calcul d'activation se retrouve &agrave; la sortie du neurone situ&eacute;e &agrave; l'extr&ecirc;me droite. De petits &eacute;clairs s'ajoutent pour indiquer que le neurone est d&eacute;clench&eacute;. C'est-&agrave;-dire que la valeur de sa sortie d&eacute;passe un seuil de d&eacute;clenchement qui d&eacute;pend de la fonction d'activation et du type d'application.</p>
 
-		<p>Finalement, une fen&ecirc;tre en bas &agrave; droite affiche le calcul fait par le neurone.</p>
+		<p>Finalement, une zone en bas &agrave; droite affiche le calcul fait par le neurone.</p>
 	</div>
 
 	<div id="familiarisation" class="tabcontent">
@@ -380,11 +378,16 @@
 	    	affichage_somme_ponderee = ""
 	    	affichage_somme_ponderee += entree_biais + " x " + poids_biais + " + ";
 	    	affichage_somme_ponderee += entree_1 + " x " + poids_1 + " + ";
-	    	affichage_somme_ponderee += entree_2 + " x " + poids_2 + " + ";
+	    	affichage_somme_ponderee += entree_2 + " x " + poids_2;
 	   	    return affichage_somme_ponderee;
 	    }
 
-	    // Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
+		// Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
+		// Échelon ou échelon binaire (en anglais, binary step)			
+		function echelon(x) {
+				return x < 0 ? 0 : 1;
+		}
+
 		// Courbe en S verticale entre 0 et +1 
 		// Appelée fonction sigmoïde ou fonction logistique
 	    function sigmoide(x) {
@@ -398,11 +401,7 @@
 
 	    // Fonction ReLU (Rectified Linear Unit)
 		function relu(x) {
-			if (x <= 0) {
-				return 0;
-			} else {
-				return x;
-			}
+			return (x <= 0) ? 0 : x;
 		}
 
 		// Code javascript pour préparer le menu déroulant pour choisir l'activation
@@ -499,6 +498,20 @@
 	    	x = somme_ponderee()
 	    	calcul_a_afficher = afficher_somme_ponderee();
 	 		switch(fonction_activation) {
+			  case "echelon":
+			    resultat_activation = echelon(x); 
+			    calcul_a_afficher = "&eacute;chelon( "+ calcul_a_afficher + " ) = " + round(resultat_activation,2);
+			    calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; 0.5";
+			    // alert("Activation: &eacute;chelon, entre 0 et +1,")
+			    if (resultat_activation > 0.5) {
+			    	calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
+			    	document.getElementById("declenchement").style.visibility = "visible";
+			    } else {
+			    	calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+			    	document.getElementById("declenchement").style.visibility = "hidden";
+			    }
+				console.log("x = "+ x + " echelon = "+ resultat_activation);
+			    break;
 			  case "sigmoide":
 			    resultat_activation = sigmoide(x); 
 			    calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ calcul_a_afficher + " ) = " + round(resultat_activation,2);
