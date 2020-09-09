@@ -175,7 +175,7 @@
 		<p>Ces signaux avec leurs poids entrent ensuite dans le corps du neurone qui fait des calculs &agrave; partir de ces entr&eacute;es. Les calculs se font en deux &eacute;tapes: une premi&egrave;re &eacute;tape est la somme pond&eacute;r&eacute;e des entr&eacute;es (repr&eacute;sent&eacute;e par le bouton avec un + rouge) et la deuxi&egrave;me &eacute;tape est l'activation du neurone (le bouton avec la courbe en S rouge). La somme pond&eacute;r&eacute;e consiste &agrave; additionner la valeur de chaque entr&eacute;e qui est multipli&eacute;e par son poids associ&eacute;. Dans le cas de notre neurone simple, le calcul est: somme_pond&eacute;r&eacute;e = entr&eacute;e_1 x poids_1 + entr&eacute;e_2 x poids_2 + biais x poids_biais. Le calcul de l'activation prend le r&eacute;sultat du calcul pr&eacute;c&eacute;dent (i.e. la somme pond&eacute;r&eacute;e) et lui applique une fonction math&eacute;matique dite fonction d'activation. Il existe plusieurs fonctions d'activation diff&eacute;rentes et notre simulateur vous propose de choisir parmi les quatre plus r&eacute;pandues (gr&acirc;ce &agrave; un menu &agrave; droite sous le corps du neurone) :<p> 
 
 		<ol>
-			<li>L'&eacute;chelon qui produit des r&eacute;sultats entre 0 et 1 avec un seuil de 0.5 Il est caract&eacute;ris&eacute; par un brusque passage de 0 à 1 en z&eacute;ro.</li> 
+			<li>L'&eacute;chelon qui produit des r&eacute;sultats entre 0 et 1 avec un seuil de 0. Il est caract&eacute;ris&eacute; par un brusque passage de 0 à 1 en z&eacute;ro.</li> 
 
 			<li>La courbe en S positive (ou sigmo&iuml;de) qui produit des r&eacute;sultats entre 0 et 1 avec un seuil de 0.5</li> 
 
@@ -503,7 +503,7 @@
 			    calcul_a_afficher = "&eacute;chelon( "+ calcul_a_afficher + " ) = " + round(resultat_activation,2);
 			    calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; 0.5";
 			    // alert("Activation: &eacute;chelon, entre 0 et +1,")
-			    if (resultat_activation > 0.5) {
+			    if (resultat_activation > 0.0) {
 			    	calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
 			    	document.getElementById("declenchement").style.visibility = "visible";
 			    } else {
@@ -1202,7 +1202,7 @@
 
 		#bouton_suivant {
 			background-color: #CFE2F3FF;
-			border: 3px solid #3D85C6;
+			border: 4px solid #3D85C6;
 			border-radius: 5px;
 			font-size: 20px;
 		}
