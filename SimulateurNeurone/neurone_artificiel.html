@@ -141,7 +141,7 @@
 					  	</span>
 				  		<select id="choix_activation">
 					    	<option value="0">Choisir l'activation...</option>
-					    	<option value="echelon" selected>Échelon</option>  
+					    	<option value="echelon" selected>&Eacute;chelon</option>  
 					    	<option value="sigmoide" selected>Courbe en S positive</option>
 					    	<option value="tanh">Courbe en S centr&eacute;e sur 0</option>
 					    	<option value="relu">Rampe droite &agrave; 45 degr&eacute;s</option>
@@ -574,7 +574,6 @@
 			neurone = new Neurone(attributs, poids_attributs, biais, poids_biais, fonction_activation);
 			neurone.somme_ponderee();
 	    	affichage_somme_ponderee = afficher_somme_ponderee();
-	    	alert(affichage_somme_ponderee);
 	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + neurone.somme_ponderee_entrees;
 	    }
 
