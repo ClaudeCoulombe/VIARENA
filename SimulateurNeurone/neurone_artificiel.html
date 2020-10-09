@@ -302,7 +302,7 @@
 			}
 			// Fonction sommation - somme ponderée des entrées
 			somme_ponderee() {
-				var somme_ponderee_entrees = math.multiply(this.donnees_entree, this.poids_donnees_entree) + this.biais*this.poids_biais;
+				var somme_ponderee_entrees = math.multiply(this.attributs, this.poids_attributs) + this.biais*this.poids_biais;
 				this.somme_ponderee_entrees = somme_ponderee_entrees;
 				return this.somme_ponderee_entrees
 			}
