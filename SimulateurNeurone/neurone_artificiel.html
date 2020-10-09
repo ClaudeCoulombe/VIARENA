@@ -271,9 +271,9 @@
 
 	<script>
 		class Neurone {
-			constructor(attributs, poids_attributs, biais=1, poids_biais=1.0, fn_activation='echelon') {
-				this.donnees_entree = math.matrix(attributs);
-				this.poids_donnees_entree = math.matrix(poids_attributs);
+			constructor(donnees_entree, poids_donnees_entree, biais=1, poids_biais=1.0, fn_activation='echelon') {
+				this.attributs = math.matrix(donnees_entree);
+				this.poids_attributs = math.matrix(poids_donnees_entree);
 				this.biais = biais;
 				this.poids_biais = poids_biais;
 				this.fn_activation = fn_activation;
@@ -566,12 +566,12 @@
 	    function onclick_somme_ponderee() {
 	    	sortie_activation.innerHTML = ""
 	    	document.getElementById("declenchement").style.visibility = "hidden";
-	    	var attributs = [entree_1,entree_2];
-	    	var poids_attributs = [parseFloat(poids_1),parseFloat(poids_2)];
+	    	var donnees_entree = [entree_1,entree_2];
+	    	var poids_donnees_entree = [parseFloat(poids_1),parseFloat(poids_2)];
 	    	var biais = parseFloat(entree_biais);
 	    	var poids_biais = parseFloat(entree_poids_biais)
 	    	var fonction_activation = 'echelon';
-			neurone = new Neurone(attributs, poids_attributs, biais, poids_biais, fonction_activation);
+			neurone = new Neurone(donnees_entree, poids_donnees_entree, biais, poids_biais, fonction_activation);
 			neurone.somme_ponderee();
 	    	affichage_somme_ponderee = afficher_somme_ponderee();
 	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + neurone.somme_ponderee_entrees;
@@ -583,11 +583,11 @@
 	    		fonction_activation = document.getElementById("choix_activation").value;
 	    		console.log("fonction_activation=",fonction_activation);
 	    	}
-	    	var attributs = [entree_1,entree_2];
-	    	var poids_attributs = [parseFloat(poids_1),parseFloat(poids_2)];
+	    	var donnees_entree = [entree_1,entree_2];
+	    	var poids_donnees_entree = [parseFloat(poids_1),parseFloat(poids_2)];
 	    	var biais = entree_biais;
 	    	var poids_biais = parseFloat(entree_poids_biais)
-			neurone = new Neurone(attributs, poids_attributs, biais, poids_biais, fonction_activation);
+			neurone = new Neurone(donnees_entree, poids_donnees_entree, biais, poids_biais, fonction_activation);
 			neurone.somme_ponderee();
 	    	sortie_affichage_calcul.innerHTML = neurone.activation_neurone();
 			sortie_activation.innerHTML = "&nbsp;&nbsp;"+ neurone.resultat_activation.toFixed(2);
