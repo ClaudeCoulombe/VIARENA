@@ -278,7 +278,7 @@
 				this.poids_biais = poids_biais;
 				this.fn_activation = fn_activation;
 				this.neurone_actif = false;
-				this.somme_ponderee_entrees = 0.0;
+				this.somme_ponderee_attributs = 0.0;
 				this.resultat_activation = 0.0;
 				this.calcul_a_afficher = "";
 			}
@@ -302,12 +302,12 @@
 			}
 			// Fonction sommation - somme ponderée des entrées
 			somme_ponderee() {
-				var somme_ponderee_entrees = math.multiply(this.attributs, this.poids_attributs) + this.biais*this.poids_biais;
-				this.somme_ponderee_entrees = somme_ponderee_entrees;
-				return this.somme_ponderee_entrees
+				var somme_ponderee_attributs = math.multiply(this.attributs, this.poids_attributs) + this.biais*this.poids_biais;
+				this.somme_ponderee_attributs = somme_ponderee_attributs;
+				return this.somme_ponderee_attributs
 			}
 			activation_neurone() {
-				x = this.somme_ponderee_entrees;
+				x = this.somme_ponderee_attributs;
 				switch(this.fn_activation) {
 					case "echelon":
 						this.resultat_activation = this.echelon(x);
@@ -561,7 +561,7 @@
 	    	return (Math.round(num * base) / base).toFixed(precision);
 	    }
 
-	    var somme_ponderee_entrees = 0.0;
+	    var somme_ponderee_attributs = 0.0;
 	    // Fonction sommation - somme ponderée des entrées
 	    function onclick_somme_ponderee() {
 	    	sortie_activation.innerHTML = ""
@@ -574,7 +574,7 @@
 			neurone = new Neurone(donnees_entree, poids_donnees_entree, biais, poids_biais, fonction_activation);
 			neurone.somme_ponderee();
 	    	affichage_somme_ponderee = afficher_somme_ponderee();
-	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + neurone.somme_ponderee_entrees;
+	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + neurone.somme_ponderee_attributs;
 	    }
 
 	    // Application de la fonction d'activation du neurone
