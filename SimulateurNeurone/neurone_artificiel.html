@@ -272,15 +272,38 @@
 	<script>
 		class Neurone {
 			constructor(donnees_entree, poids_donnees_entree, biais=1, poids_biais=1.0, fn_activation='echelon') {
-				this.donnees_entree = math.matrix(donnees_entree);
-				this.poids_donnees_entree = math.matrix(poids_donnees_entree);
+				this.donnees_entree = donnees_entree;
+				if (poids_donnees_entree) {
+					this.poids_donnees_entree = poids_donnees_entree;
+				} else {
+					// Initialiser avec des poids choisis aléatoirement
+					this.poids_donnees_entree = new Array(donnees_entree.length)
+					for ( let i = 0; i < donnees_entree.length; i++ ) {
+						this.poids_donnees_entree[i] = nombreAleatoire() * 2 - 1;
+					}
+				}
 				this.biais = biais;
 				this.poids_biais = poids_biais;
+				this.somme_ponderee_donnees_entree = 0.0;
 				this.fn_activation = fn_activation;
 				this.neurone_actif = false;
-				this.somme_ponderee_donnees_entree = 0.0;
 				this.resultat_activation = 0.0;
 				this.calcul_a_afficher = "";
+				// this.afficher();
+			}	
+			afficher(){
+				afficherMessage("");
+				afficherMessage("Etat du Neurone");
+				afficherMessage("donnees_entree: "+this.donnees_entree);
+				afficherMessage("poids_donnees_entree: "+this.poids_donnees_entree);
+				afficherMessage("biais: "+this.biais);
+				afficherMessage("poids_biais: "+this.poids_biais);
+				afficherMessage("somme_ponderee_donnees_entree: "+this.somme_ponderee_donnees_entree);
+				afficherMessage("fn_activation: "+this.fn_activation);
+				afficherMessage("neurone_actif: "+this.neurone_actif);
+				afficherMessage("resultat_activation: "+this.resultat_activation);
+				afficherMessage("calcul_a_afficher: "+this.calcul_a_afficher);
+				afficherMessage("");
 			}
 			// Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
 			// Échelon ou échelon binaire (en anglais, binary step)			
@@ -302,17 +325,20 @@
 			}
 			// Fonction sommation - somme ponderée des entrées
 			somme_ponderee() {
-				var somme_ponderee_donnees_entree = math.multiply(this.donnees_entree, this.poids_donnees_entree) + this.biais*this.poids_biais;
+				var somme_ponderee_donnees_entree = this.biais*this.poids_biais;
+				this.poids_donnees_entree.forEach((poids, index) => 
+					{   somme_ponderee_donnees_entree += this.donnees_entree[index] * poids });
 				this.somme_ponderee_donnees_entree = somme_ponderee_donnees_entree;
 				return this.somme_ponderee_donnees_entree
 			}
 			activation_neurone() {
-				x = this.somme_ponderee_donnees_entree;
+				this.calcul_a_afficher = "";
+				x = this.somme_ponderee();
 				switch(this.fn_activation) {
 					case "echelon":
 						this.resultat_activation = this.echelon(x);
-						this.calcul_a_afficher = "&eacute;chelon( "+ this.calcul_a_afficher + " ) = " + round(this.resultat_activation,2);
-						this.calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; 0.5";
+						this.calcul_a_afficher = "&eacute;chelon( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
+						this.calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
 						if (this.resultat_activation > 0.0) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
 							this.neurone_actif = true;
@@ -323,7 +349,7 @@
 						break;
 					case "sigmoide":
 						this.resultat_activation = this.sigmoide(x);
-						this.calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ this.calcul_a_afficher + " ) = " + round(this.resultat_activation,2);
+						this.calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Courbe en S positive, entre 0 et +1, ou sigmo&iuml;de, ou fonction logistique, avec un seuil de d&eacute;clenchement &agrave; 0.5";
 						if (this.resultat_activation > 0.5) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
@@ -335,7 +361,7 @@
 						break;
 					case "tanh":
 						this.resultat_activation = this.tangente_hyperbolique(x); 
-						this.calcul_a_afficher = "tanh( "+ this.calcul_a_afficher + " ) = " + round(this.resultat_activation,2);
+						this.calcul_a_afficher = "tanh( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Courbe en S centr&eacute;e sur z&eacute;ro, entre -1 et +1 ou tangente hyperbolique, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
 						if (this.resultat_activation > 0.0) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
@@ -347,7 +373,7 @@
 						break;
 					case "relu":
 						this.resultat_activation = this.relu(x);
-						this.calcul_a_afficher = "relu( "+ this.calcul_a_afficher + " ) = " + round(this.resultat_activation,2);
+						this.calcul_a_afficher = "relu( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Rampe droite &agrave; 45 degr&eacute; ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
 						if (this.resultat_activation > 0.0) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
@@ -360,24 +386,13 @@
 					default:
 						this.resultat_activation = "ERREUR";
 				}
-				return this.calcul_a_afficher;
+				return this.resultat_activation;
 			}
 		}
 
 		var sortie_affichage_calcul = document.getElementById('affichage_du_calcul');
 		var sortie_activation = document.getElementById('affichage_activation');
 
-	/*
-			<span>
-				<img id="image_entree" src="https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@entree.png"/>
-				<label class="affichage_entree_binaire_0" for="0">0</label>
-				<input id="entree_bin_1_0" class="entree_binaire_0" type="radio" checked="checked" 
-				       name="entree_bin_1" value='0' onclick="entrer_valeur_dattribut(this.id)">
-				<label class="affichage_entree_binaire_1" for="1">1</label>
-				<input id="entree_bin_1_1" class="entree_binaire_1" type="radio" 
-					   name="entree_bin_1" value='1' onclick="entrer_valeur_dattribut(this.id)">					
-			</span>
-	*/
 		var entree_biais = 1.0;
 		var entree_1 = 0.0;
 		var entree_2 = 0.0;
@@ -418,13 +433,6 @@
 			    alert("*** ERREUR entrer_valeur_dattribut ***");
 			}
 		}
-
-	 	/* 	
-			<span class="contenant_glissiere">
-				<input id="glissiere_poids_biais" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
-			 	<span id="sortie_glissiere_poids_biais">0</span>
-			</span>
-		*/
 
 		// Code des glissière servant à entrer les poids
 		var glissiere_poids_biais = document.getElementById("glissiere_poids_biais");
@@ -556,25 +564,24 @@
 	        return Math.random(); 
 	    }
 
-	    function round(num, precision) {
+	    function arrondir(num, precision=2) {
 	    	var base = 10 ** precision;
 	    	return (Math.round(num * base) / base).toFixed(precision);
 	    }
 
-	    var somme_ponderee_donnees_entree = 0.0;
 	    // Fonction sommation - somme ponderée des entrées
 	    function onclick_somme_ponderee() {
 	    	sortie_activation.innerHTML = ""
 	    	document.getElementById("declenchement").style.visibility = "hidden";
-	    	var donnees_entree = [entree_1,entree_2];
-	    	var poids_donnees_entree = [parseFloat(poids_1),parseFloat(poids_2)];
+	    	var donnees_entree = [[parseFloat(entree_1)],[parseFloat(entree_2)]];
+	    	var poids_donnees_entree = [[parseFloat(poids_1)],[parseFloat(poids_2)]];
 	    	var biais = parseFloat(entree_biais);
 	    	var poids_biais = parseFloat(entree_poids_biais)
 	    	var fonction_activation = 'echelon';
 			neurone = new Neurone(donnees_entree, poids_donnees_entree, biais, poids_biais, fonction_activation);
 			neurone.somme_ponderee();
 	    	affichage_somme_ponderee = afficher_somme_ponderee();
-	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + neurone.somme_ponderee_donnees_entree;
+	    	sortie_affichage_calcul.innerHTML = affichage_somme_ponderee + " = " + arrondir(neurone.somme_ponderee_donnees_entree);
 	    }
 
 	    // Application de la fonction d'activation du neurone
@@ -583,19 +590,25 @@
 	    		fonction_activation = document.getElementById("choix_activation").value;
 	    		console.log("fonction_activation=",fonction_activation);
 	    	}
-	    	var donnees_entree = [entree_1,entree_2];
-	    	var poids_donnees_entree = [parseFloat(poids_1),parseFloat(poids_2)];
+	    	var donnees_entree = [[parseFloat(entree_1)],[parseFloat(entree_2)]];;
+	    	var poids_donnees_entree = [[parseFloat(poids_1)],[parseFloat(poids_2)]];
 	    	var biais = entree_biais;
 	    	var poids_biais = parseFloat(entree_poids_biais)
 			neurone = new Neurone(donnees_entree, poids_donnees_entree, biais, poids_biais, fonction_activation);
-			neurone.somme_ponderee();
-	    	sortie_affichage_calcul.innerHTML = neurone.activation_neurone();
-			sortie_activation.innerHTML = "&nbsp;&nbsp;"+ neurone.resultat_activation.toFixed(2);
+			neurone.activation_neurone();
+	    	sortie_affichage_calcul.innerHTML = neurone.calcul_a_afficher;
+			sortie_activation.innerHTML = "&nbsp;&nbsp;"+ arrondir(neurone.resultat_activation);
 			if (neurone.neurone_actif) {
 				document.getElementById("declenchement").style.visibility = "visible";
 			} else {
 				document.getElementById("declenchement").style.visibility = "hidden";
 			}
+	    }
+
+	    function afficherMessage(message) {
+	            var element = document.createElement('strong');
+	            element.innerHTML = message + '<br/>';
+	            document.body.appendChild(element);
 	    }
 
 		const tabs_list = ['description', 'familiarisation', 'exercices', 'ET', 'OU', 'NON', 'NON_ET', 'NON_OU'];
