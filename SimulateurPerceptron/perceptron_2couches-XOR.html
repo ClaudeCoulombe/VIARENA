@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <!-- Travail original en JavaScript par Petro Liashchynskyi: https://github.com/liashchynskyi/skynet/ -->
+  <!-- Fortement inspiré par Andrew Trask: https://iamtrask.github.io/2015/07/12/basic-python-network/ -->
+  <!-- Avec de petites améliorations de Claude Coulombe: https://github.com/ClaudeCoulombe/skynet/ -->
+  <head>
+    <title>Simulation d'un perceptron à une couche cachée pour apprendre un XOR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  Math.js est une bibliothèque mathématique pour JavaScript et Node.js -->
+    <script src="math.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+
+    <div id="affichage"></div>
+
+    <script>
+
+        // Intégration du contenu du fichier activations.js de Petro Liashchynskyi
+        function sigmoide(x, derivative) {
+            let fx = 1 / (1 + math.exp(-x));
+            if (derivative) {
+                return fx * (1 - fx);
+            };
+            return fx;
+        }
+
+        function tanh(x, derivative) {
+            let fx = 2 / (1 + math.exp(-2 * x)) - 1;
+            if (derivative) 
+                return 1 - math.pow(fx, 2);
+            return fx;
+        }
+
+        function relu(x, derivative) {
+            if (derivative)
+                return x < 0 ? 0 : 1;
+            return x < 0 ? 0 : x;
+        }
+
+        function softplus(x, derivative) {
+            if (derivative)
+                return 1 / (1 + math.exp(-x));
+            return math.log(1 + math.exp(x), e);
+        }
+
+        function afficherMessage(message)
+        {
+            var element = document.createElement('strong');
+            element.innerHTML = message + '<br/>';
+            document.body.appendChild(element);
+        }
+
+        class ReseauDeNeurones {
+            constructor(...args) {
+                this.neuronesCoucheEntree = args[0];
+                this.neuronesCoucheCachee = args[1];
+                this.neuronesCoucheSortie = args[2];
+
+                this.epoques = 60000;
+                this.activation = sigmoide; 
+                this.gainGradient = 1.0;
+                this.sortie = 0; 
+
+                //Initialisation des poids (ou paramètres) au hasard
+                this.poidsCoucheCachee = math.random([this.neuronesCoucheEntree, this.neuronesCoucheCachee], 0.5, 1.0);
+                afficherMessage("poidsCoucheCachee: " + this.poidsCoucheCachee);
+                this.poidsCoucheSortie = math.random([this.neuronesCoucheCachee, this.neuronesCoucheSortie], 0.5, 1.0);
+                afficherMessage("poidsCoucheSortie: " + this.poidsCoucheSortie);
+            }
+            setEpoques(numEpoques) {
+                this.epoques = numEpoques;
+            }
+            setActivation(func) {
+                switch (func) {
+                    case 'tanh': {
+                        this.activation = tanh;
+                        break;
+                    }
+                    case 'relu': {
+                        this.activation = relu;
+                        break;
+                    }
+                    case 'softplus': {
+                        this.activation = softplus;
+                        break;
+                    }
+                    default: {
+                        this.activation = sigmoide;
+                        break;
+                    } 
+                }
+            }
+            setGainGradient(gainGradient) {
+                this.gainGradient = gainGradient;
+            }
+            entrainer(attributsDonneesEntree, etiquettesCibles) {
+                for (let i = 0; i < this.epoques; i++) {
+                    // Propagation avant
+                    let coucheEntree = attributsDonneesEntree;
+                    let coucheCacheeLineaire = math.multiply(coucheEntree, this.poidsCoucheCachee)
+                    let coucheCacheeActivee = coucheCacheeLineaire.map(v => this.activation(v, false));
+                    let coucheSortieLineaire = math.multiply(coucheCacheeActivee, this.poidsCoucheSortie)
+                    let coucheSortieActivee = coucheSortieLineaire.map(v => this.activation(v, false));
+                    // Calcul de l'erreur de la sortie
+                    let erreurSortie = math.subtract(etiquettesCibles, coucheSortieActivee);
+                    if (i % 10000 == 0) {
+                        afficherMessage("Itération: " + i + " - Gain du gradient: " + this.gainGradient + " - Erreur: " + 
+                            math.mean(math.abs(erreurSortie)));
+                    }
+                    // Rétropropagation de l'erreur de sortie dans la couche de sortie
+                    let gradientErreurSortie = math.dotMultiply(erreurSortie, math.multiply(coucheCacheeActivee, this.poidsCoucheSortie).map(v => this.activation(v, true)));
+                    // Ajustement des poids de la couche de sortie
+                    this.poidsCoucheSortie = math.add(this.poidsCoucheSortie, math.multiply(math.transpose(coucheCacheeActivee), math.multiply(gradientErreurSortie, this.gainGradient)));
+                    // Rétropropagation de l'erreur de la couche de sortie vers la couche cachée
+                    let erreurCoucheCachee = math.multiply(gradientErreurSortie, math.transpose(this.poidsCoucheSortie));
+                    let gradientErreurCoucheCachee = math.dotMultiply(erreurCoucheCachee, coucheCacheeLineaire.map(v => this.activation(v, true)));
+                    // Ajustement des poids de la couche cachée
+                    this.poidsCoucheCachee = math.add(this.poidsCoucheCachee, math.multiply(math.transpose(coucheEntree), math.multiply(gradientErreurCoucheCachee, this.gainGradient)));
+                };
+                afficherMessage('Entraînement terminé');
+            }
+            predict(attributsDonneesEntree) {
+                let coucheEntree = attributsDonneesEntree;
+                let coucheCacheeActivee = math.multiply(coucheEntree, this.poidsCoucheCachee).map(v => this.activation(v, false));
+                let coucheSortieActivee = math.multiply(coucheCacheeActivee, this.poidsCoucheSortie).map(v => this.activation(v, false));
+                return coucheSortieActivee;
+            }
+        }
+        // Perceptron
+        afficherMessage('Perceptron');
+        afficherMessage('Initialisation des données');
+        afficherMessage("OU EXCLUSIF logique (XOR)")
+        const attributsDonneesEntree = math.matrix([[0,0], [0,1], [1,0], [1,1]]);
+        const etiquettesCibles = math.matrix([[0], [1], [1], [0]]);
+        // afficherMessage("OU logique")
+        // const attributsDonneesEntree = math.matrix([[0,0], [0,1], [1,0], [1,1]]);
+        // const etiquettesCibles = math.matrix([[0], [1], [1], [1]]);
+
+        afficherMessage("Création d'un perceptron à une couche cachée de 2 neurones");
+        const perceptron = new ReseauDeNeurones(2, 2, 1);
+
+        afficherMessage("Entraînement du perceptron");
+        perceptron.entrainer(attributsDonneesEntree, etiquettesCibles);
+
+        afficherMessage("Prédiction du perceptron");
+        afficherMessage("Vraies étiquettes: " + etiquettesCibles);
+        afficherMessage("Étiquettes prédites: " + perceptron.predict(attributsDonneesEntree));
+    </script>
+    <style>
+    </style>
+  </body>
+</html>
