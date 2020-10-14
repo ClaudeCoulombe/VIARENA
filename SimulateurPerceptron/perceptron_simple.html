@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <!-- Travail original en JavaScript par John Fisher https://github.com/jg-fisher/perceptron -->
+  <!-- Également inspiré par Petro Liashchynskyi: https://github.com/liashchynskyi/skynet/ -->
+  <!-- et Andrew Trask: https://iamtrask.github.io/2015/07/12/basic-python-network/ -->
+  <!-- Refactorisation et améliorations de Claude COULOMBE -->
+  <head>
+    <title>Simulation d'un perceptron simple à un seul neurone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+
+    <div id="affichage"></div>
+
+    <script>
+
+      class Neurone {
+        constructor(donnees_entree, poids_donnees_entree, biais=1, poids_biais=1.0, fn_activation='echelon') {
+          this.donnees_entree = donnees_entree;
+          if (poids_donnees_entree) {
+            this.poids_donnees_entree = poids_donnees_entree;
+          } else {
+            // Initialiser avec des poids choisis aléatoirement
+            this.poids_donnees_entree = new Array(donnees_entree.length)
+            for ( let i = 0; i < donnees_entree.length; i++ ) {
+              this.poids_donnees_entree[i] = nombreAleatoire() * 2 - 1;
+            }
+          }
+          this.biais = biais;
+          this.poids_biais = poids_biais;
+          this.somme_ponderee_donnees_entree = 0.0;
+          this.fn_activation = fn_activation;
+          this.neurone_actif = false;
+          this.resultat_activation = 0.0;
+          this.calcul_a_afficher = "";
+          this.afficher();
+        } 
+        afficher(indicateur=true){
+          if (indicateur) {
+            afficherMessage("");
+            afficherMessage("Etat du Neurone");
+            afficherMessage("donnees_entree: "+this.donnees_entree);
+            afficherMessage("poids_donnees_entree: "+this.poids_donnees_entree);
+            afficherMessage("biais: "+this.biais);
+            afficherMessage("poids_biais: "+this.poids_biais);
+            afficherMessage("somme_ponderee_donnees_entree: "+this.somme_ponderee_donnees_entree);
+            afficherMessage("fn_activation: "+this.fn_activation);
+            afficherMessage("neurone_actif: "+this.neurone_actif);
+            afficherMessage("resultat_activation: "+this.resultat_activation);
+            afficherMessage("calcul_a_afficher: "+this.calcul_a_afficher);
+            afficherMessage("");
+          }
+        }
+        // Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
+        // Échelon ou échelon binaire (en anglais, binary step)     
+        echelon(x) {
+            return x < 0 ? 0 : 1;
+        }
+        // Courbe en S verticale entre 0 et +1 
+        // Appelée fonction sigmoïde ou fonction logistique
+        sigmoide(x) {
+          return (1/(1 + Math.pow(Math.E, -x)));
+        }
+        // Fonction tanh ou tangente_hyperbolique
+        tangente_hyperbolique(x) {
+          return Math.tanh(x);
+        }
+        // Fonction ReLU (Rectified Linear Unit)
+        relu(x) {
+          return (x <= 0) ? 0 : x;
+        }
+        // Fonction sommation - somme ponderée des entrées
+        somme_ponderee() {
+          var somme_ponderee_donnees_entree = this.biais*this.poids_biais;
+          this.poids_donnees_entree.forEach((poids, index) => 
+            { somme_ponderee_donnees_entree += this.donnees_entree[index] * poids });
+          this.somme_ponderee_donnees_entree = somme_ponderee_donnees_entree;
+          return this.somme_ponderee_donnees_entree;
+        }
+        activation_neurone() {
+          this.calcul_a_afficher = "";
+          var x = this.somme_ponderee_donnees_entree;
+          switch(this.fn_activation) {
+            case "echelon":
+              this.resultat_activation = this.echelon(x);
+              this.calcul_a_afficher = "&eacute;chelon( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
+              this.calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
+              if (this.resultat_activation > 0.0) {
+                this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = true;
+              } else {
+                this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = false;
+              }
+              break;
+            case "sigmoide":
+              this.resultat_activation = this.sigmoide(x);
+              this.calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
+              this.calcul_a_afficher += " - Activation: Courbe en S positive, entre 0 et +1, ou sigmo&iuml;de, ou fonction logistique, avec un seuil de d&eacute;clenchement &agrave; 0.5";
+              if (this.resultat_activation > 0.5) {
+                this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = true;
+              } else {
+                this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = false;
+              }
+              break;
+            case "tanh":
+              this.resultat_activation = this.tangente_hyperbolique(x); 
+              this.calcul_a_afficher = "tanh( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
+              this.calcul_a_afficher += " - Activation: Courbe en S centr&eacute;e sur z&eacute;ro, entre -1 et +1 ou tangente hyperbolique, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
+              if (this.resultat_activation > 0.0) {
+                this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = true;
+              } else {
+                this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = false;
+              }
+              break;
+            case "relu":
+              this.resultat_activation = this.relu(x);
+              this.calcul_a_afficher = "relu( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
+              this.calcul_a_afficher += " - Activation: Rampe droite &agrave; 45 degr&eacute; ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
+              if (this.resultat_activation > 0.0) {
+                this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = true;
+              } else {
+                this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+                this.neurone_actif = false;
+              }
+              break;
+            default:
+              this.resultat_activation = "ERREUR";
+          }
+          return this.resultat_activation;
+        }
+      }
+
+      // Perceptron
+      // Inspiration https://github.com/jg-fisher/perceptron
+      class Perceptron  {
+        constructor(attributs_entrainement, etiquettes_cibles, epoques=10, gain_gradient=0.1) {
+          this.attributs_entrainement = attributs_entrainement;
+          this.etiquettes_cibles = etiquettes_cibles;
+          this.nombre_exemples = 0;
+          this.gain_gradient = gain_gradient;
+          this.epoques = epoques;
+          this.exactitude = 0;
+          this.neurone = new Neurone(attributs_entrainement[0], null, 1.0, 1.0, 'echelon');
+          this.afficher();
+        }
+        afficher(indicateur=true) {
+          if (indicateur) {
+            afficherMessage("");
+            afficherMessage("Etat du Perceptron");
+            afficherMessage("Attributs d'entrainement: "+this.attributs_entrainement);
+            afficherMessage("Etiquettes cibles: "+this.etiquettes_cibles);
+            afficherMessage("Nombre d'exemples: "+this.nombre_exemples);
+            afficherMessage("Gain gradient: "+this.gain_gradient);
+            afficherMessage("Nombre d'époques: "+this.epoques);
+            afficherMessage("Exactitude: "+this.exactitude);
+            afficherMessage("");
+         }
+        }
+        // Prédiction
+        predire (entree) {
+          this.neurone.donnees_entree = entree;
+          this.neurone.somme_ponderee();
+          return this.neurone.activation_neurone();
+        }
+        // Entraîner le Perceptron sur des données
+        entrainer() {
+          afficherMessage("Début entraînement du perceptron...");
+          // Pour chaque époque (passage dans le jeu des données d'entraînement) itérer
+          for ( var epoque = 0; epoque < this.epoques; epoque++) {
+            // Pour chaque exemple de données d'entraînement
+            for ( var i_attribut = 0; i_attribut < this.attributs_entrainement.length; i_attribut++ ) { 
+              // Faire une prédiction - chainage avant
+              var prediction = this.predire(this.attributs_entrainement[i_attribut]);
+              afficherMessage("Vraie étiquette: "+this.etiquettes_cibles[i_attribut]+" Étiquette prédite: " + prediction,true);
+              // Mettre à jour la mesure d'exactitude
+              if (this.etiquettes_cibles[i_attribut] === prediction) {
+                this.exactitude += 1;
+              }
+              this.nombre_exemples += 1;
+              // Calcul de l'erreur, perte ou coût
+              var erreur = this.etiquettes_cibles[i_attribut] - prediction;
+              // Mise à jour des paramètres ou poids
+              for ( var i_poids = 0; i_poids < this.neurone.poids_donnees_entree.length; i_poids++ ) { 
+                this.neurone.poids_donnees_entree[i_poids] += erreur * this.attributs_entrainement[i_attribut][i_poids] * this.gain_gradient;
+              }
+              // Mise à jour du biais 
+              // this.biais += erreur * this.gain_gradient;
+              this.neurone.poids_biais += erreur * this.gain_gradient;
+            }
+            // Afficher l'exactitude après chaque époque (passage dans le jeu des données d'entraînement)
+            afficherMessage("*** Exactitude: "+this.exactitude/this.nombre_exemples+" ***");
+          }
+          afficherMessage("Fin entraînement du perceptron");
+        }
+      }
+
+      // Nombre aleatoire entre 0 et 1
+      function nombreAleatoire() {
+          return Math.random(); 
+      }
+
+      function arrondir(num, precision=2) {
+        var base = 10 ** precision;
+        return (Math.round(num * base) / base).toFixed(precision);
+      }
+
+      function afficherMessage(message,indicateur=true) {
+        if (indicateur) {
+          var element = document.createElement('strong');
+          element.innerHTML = message + '<br/>';
+          document.body.appendChild(element);
+        }
+      }
+      
+      attributs_entrainement = [[0, 0], [0, 1], [1, 0], [1, 1]];
+      etiquettes_cibles = [0, 1, 1, 1];
+      afficherMessage("Apprentissage d'un OU logique");
+      afficherMessage("Données d'entraînement: "+attributs_entrainement);
+      afficherMessage("Étiquettes cibles: "+etiquettes_cibles);
+      perceptron = new Perceptron(attributs_entrainement, etiquettes_cibles, epoques=100, gain_gradient=0.1);
+      perceptron.entrainer();
+      afficherMessage("Prédire [0, 0]: "+perceptron.predire([0, 0]));
+      afficherMessage("Prédire [1, 0]: "+perceptron.predire([1, 0]));
+      afficherMessage("Prédire [0, 1]: "+perceptron.predire([0, 1]));
+      afficherMessage("Prédire [1, 1]: "+perceptron.predire([1, 1]));
+
+    </script>
+    <style>
+    </style>
+  </body>
+</html>
