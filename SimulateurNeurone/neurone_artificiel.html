@@ -5,6 +5,8 @@
   <head>
     <title>Simulation d'un neurone artificiel</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  Math.js est une bibliothèque mathématique pour JavaScript et Node.js -->
+    <script src="math.min.js" type="text/javascript"></script>
   </head>
   <body>
 	<hr>
@@ -268,7 +270,7 @@
   	</div>
 
 	<script>
-
+	
 		class Neurone {
 			constructor(donnees_entree, poids_donnees_entree, biais=1, poids_biais=1.0, fn_activation='echelon') {
 				this.donnees_entree = donnees_entree;
@@ -290,20 +292,22 @@
 				this.calcul_a_afficher = "";
 				// this.afficher();
 			}	
-			afficher(){
-				afficherMessage("");
-				afficherMessage("Etat du Neurone");
-				afficherMessage("donnees_entree: "+this.donnees_entree);
-				afficherMessage("poids_donnees_entree: "+this.poids_donnees_entree);
-				afficherMessage("biais: "+this.biais);
-				afficherMessage("poids_biais: "+this.poids_biais);
-				afficherMessage("somme_ponderee_donnees_entree: "+this.somme_ponderee_donnees_entree);
-				afficherMessage("fn_activation: "+this.fn_activation);
-				afficherMessage("neurone_actif: "+this.neurone_actif);
-				afficherMessage("resultat_activation: "+this.resultat_activation);
-				afficherMessage("calcul_a_afficher: "+this.calcul_a_afficher);
-				afficherMessage("");
-			}
+	        afficher(indicateur=true){
+	          if (indicateur) {
+	            afficherMessage("");
+	            afficherMessage("Etat du Neurone");
+	            afficherMessage("donnees_entree: "+this.donnees_entree);
+	            afficherMessage("poids_donnees_entree: "+this.poids_donnees_entree);
+	            afficherMessage("biais: "+this.biais);
+	            afficherMessage("poids_biais: "+this.poids_biais);
+	            afficherMessage("somme_ponderee_donnees_entree: "+this.somme_ponderee_donnees_entree);
+	            afficherMessage("fn_activation: "+this.fn_activation);
+	            afficherMessage("neurone_actif: "+this.neurone_actif);
+	            afficherMessage("resultat_activation: "+this.resultat_activation);
+	            afficherMessage("calcul_a_afficher: "+this.calcul_a_afficher);
+	            afficherMessage("");
+	          }
+	        }
 			// Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
 			// Échelon ou échelon binaire (en anglais, binary step)			
 			echelon(x) {
@@ -326,9 +330,9 @@
 			somme_ponderee() {
 				var somme_ponderee_donnees_entree = this.biais*this.poids_biais;
 				this.poids_donnees_entree.forEach((poids, index) => 
-					{   somme_ponderee_donnees_entree += this.donnees_entree[index] * poids });
+					{ somme_ponderee_donnees_entree += this.donnees_entree[index] * poids });
 				this.somme_ponderee_donnees_entree = somme_ponderee_donnees_entree;
-				return this.somme_ponderee_donnees_entree
+				return this.somme_ponderee_donnees_entree;
 			}
 			activation_neurone() {
 				this.calcul_a_afficher = "";
@@ -348,7 +352,7 @@
 						break;
 					case "sigmoide":
 						this.resultat_activation = this.sigmoide(x);
-						this.calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
+						this.calcul_a_afficher = "sigmo"+"&iuml;"+"de( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Courbe en S positive, entre 0 et +1, ou sigmo&iuml;de, ou fonction logistique, avec un seuil de d&eacute;clenchement &agrave; 0.5";
 						if (this.resultat_activation > 0.5) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
@@ -360,7 +364,7 @@
 						break;
 					case "tanh":
 						this.resultat_activation = this.tangente_hyperbolique(x); 
-						this.calcul_a_afficher = "tanh( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
+						this.calcul_a_afficher = "tanh( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Courbe en S centr&eacute;e sur z&eacute;ro, entre -1 et +1 ou tangente hyperbolique, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
 						if (this.resultat_activation > 0.0) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
@@ -372,7 +376,7 @@
 						break;
 					case "relu":
 						this.resultat_activation = this.relu(x);
-						this.calcul_a_afficher = "relu( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
+						this.calcul_a_afficher = "relu( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
 						this.calcul_a_afficher += " - Activation: Rampe droite &agrave; 45 degr&eacute; ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
 						if (this.resultat_activation > 0.0) {
 							this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
