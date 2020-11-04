@@ -51,6 +51,7 @@
       </fieldset>
       </div>
     </fieldset>
+<!--    <div id="anim"></div> -->
   <script>
 
         class Neurone {
@@ -356,6 +357,26 @@
               alert("*** ERREUR entrer_valeur_dattribut ***");
         }
       }
+
+      /* If the user clicks anywhere outside the select box,
+      then close all select boxes: */
+      // document.addEventListener("click", closeAllSelect);
+
+      // var scrollUp = (function () {
+      //   var timerId; // stored timer in case you want to use clearInterval later
+      //   return function (height, times, element) {
+      //     var i = 0; // a simple counter
+      //     timerId = setInterval(function () {
+      //       if (i > times) // if the last frame is reached, set counter to zero
+      //         i = 0;
+      //       element.style.backgroundPosition = "0px -" + i * height + 'px'; //scroll up
+      //       i++;
+      //     }, 100); // every 100 milliseconds
+      //   };
+      // })();
+
+      // // start animation:
+      // scrollUp(14, 42, document.getElementById('anim'))
 
   </script>
 
@@ -972,6 +993,12 @@
         border: 4px solid #3D85C6;
         border-radius: 5px;
         font-size: 20px;
+      }
+
+      #bouton_demarrer:active {
+        box-shadow: 0 0 0 black;
+        background-color:#3D85C6;
+        margin: 3px 0 0 0 ;
       }
 
       .parent {
