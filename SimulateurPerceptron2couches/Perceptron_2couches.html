@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html>
+  <!-- Travail original en JavaScript par Petro Liashchynskyi: https://github.com/liashchynskyi/skynet/ -->
+  <!-- Fortement inspiré par Andrew Trask: https://iamtrask.github.io/2015/07/12/basic-python-network/ -->
+  <!-- Avec de petites améliorations de Claude Coulombe: https://github.com/ClaudeCoulombe/skynet/ -->
+  <head>
+    <title>Simulation d'un perceptron à deux couches capable d'apprendre un XOR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--  Math.js is an extensive math library for JavaScript and Node.js. 
+          It features a flexible expression parser and offers an integrated solution 
+          to work with numbers, big numbers, complex numbers, units, and matrices.
+    -->
+    <script src="math.min.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <fieldset id="simulateur_perceptron">
+      <legend id="titre_simulateur">Simulation d'un perceptron à deux couches</legend>
+      <br>
+      <div class="parent">
+          <div>
+            <img class="reseau_neurones" width=1000 src="Perceptron2Couches.png"/>
+            <button id="biais_nc1" class="biais" type="button">
+                <img id="image_biais" src="https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@biais.png">
+            </button>
+            <label id="affichage_entree_biais_nc1_0" class="affichage_entree_0" for="0">0</label>
+            <label id="affichage_entree_biais_nc1_1" class="affichage_entree_1" for="1">1</label>
+            <span>
+                <input id="glissiere_poids_biais_nc1" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_biais_nc1">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree1_nc1" class="glissiere_poids" type="range" min="-100" max="100" value="0">
+                <span id="affichage_glissiere_poids_entree1_nc1">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree2_nc1" class="glissiere_poids" type="range" min="-100" max="100" value="0">
+                <span id="affichage_glissiere_poids_entree2_nc1">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree1_nc2" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_entree1_nc2">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree2_nc2" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_entree2_nc2">0.00</span>
+            </span>
+            <span>
+                <button id="biais_nc2" class="biais" type="button">
+                    <img id="image_biais" src="https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@biais.png">
+                </button>
+            </span>
+            <label id="affichage_entree_biais_nc2_0" class="affichage_entree_0" for="0">0</label>
+            <input id="entree_biais_nc2_0" class="entree_0" type="radio" disabled
+            name="entree_biais_nc2_0" value='0' onclick="entrer_valeur_dattribut(this.id)">
+            <label id="affichage_entree_biais_nc2_1" class="affichage_entree_1" for="1">1</label>
+            <input id="entree_biais_nc2_1" class="entree_1" type="radio" checked="checked"
+            name="entree_biais_nc2_1" value='1' onclick="entrer_valeur_dattribut(this.id)">   
+            <span>
+                <input id="glissiere_poids_biais_nc2" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_biais_nc2">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree1_ns" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_entree1_ns">0.00</span>
+            </span>
+            <span>   
+              <button id="biais_ns" class="biais" type="button">
+                <img id="image_biais" src="https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@biais.png">
+              </button>
+            </span>
+            <label id="affichage_entree_biais_ns_0" class="affichage_entree_0" for="0">0</label>
+            <label id="affichage_entree_biais_ns_1" class="affichage_entree_1" for="1">1</label>
+           <span>
+                <input id="glissiere_poids_biais_ns" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_biais_ns">0.00</span>
+            </span>
+            <span>
+                <input id="glissiere_poids_entree2_ns" class="glissiere_poids" type="range" min="-100" max="100" value="0" >
+                <span id="affichage_glissiere_poids_entree2_ns">0.00</span>
+            </span>
+            <img id="declenchement" src="https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@declenchement.png">
+          </div>
+          <fieldset id="afficheur_parametres_simulation">
+            <legend id="titre_afficheur">Svp, sélectionnez une fonction logique à apprendre:</legend>
+            <div id="choix_fonction_logique">
+              <input type="radio" checked="checked" id="ET" name="groupe_radio" value="ET" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="ET">ET</label><br>
+              <input type="radio" id="OU" name="groupe_radio" value="OU" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="OU">OU</label><br>
+              <input type="radio" id="NON" name="groupe_radio" value="NON" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="NON">NON</label><br>
+              <input type="radio" id="NON_ET" name="groupe_radio" value="NON_ET" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="NON_ET">NON ET</label><br>
+              <input type="radio" id="NON_OU" name="groupe_radio" value="NON_OU" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="NON_OU">NON OU</label><br>
+              <input type="radio" id="OU_EXCLUSIF" name="groupe_radio" value="OU_EXCLUSIF" onclick="entrer_valeur_dattribut(this.id)">
+              <label for="OU_EXCLUSIF">OU Exclusif</label><br><br>
+              <div>
+                <input type="submit" id="bouton_demarrer" value="Entra&icirc;ner" onclick="demarrer_simulateur()"</input>
+              </div>
+            </fieldset>
+          </div>
+      </div>
+      <br>
+      <fieldset id="afficheur_calcul_du_neurone">
+        <legend id="titre_afficheur">Calcul fait par le perceptron</legend>
+        <label id="affichage_du_calcul"></label>
+      </fieldset>
+      </div>
+    </fieldset>
+
+    <script>
+
+        // Intégration du contenu du fichier activations.js de Petro Liashchynskyi
+        function sigmoide(x, derivative) {
+            let fx = 1 / (1 + math.exp(-x));
+            if (derivative) {
+                return fx * (1 - fx);
+            };
+            return fx;
+        }
+
+        function tanh(x, derivative) {
+            let fx = 2 / (1 + math.exp(-2 * x)) - 1;
+            if (derivative) 
+                return 1 - math.pow(fx, 2);
+            return fx;
+        }
+
+        function relu(x, derivative) {
+            if (derivative)
+                return x < 0 ? 0 : 1;
+            return x < 0 ? 0 : x;
+        }
+
+        function softplus(x, derivative) {
+            if (derivative)
+                return 1 / (1 + math.exp(-x));
+            return math.log(1 + math.exp(x), e);
+        }
+
+        function afficherMessage(message)
+        {
+            var element = document.createElement('strong');
+            element.innerHTML = message + '<br/>';
+            document.body.appendChild(element);
+        }
+
+        function arrondir(num, precision=3) {
+          var base = 10 ** precision;
+          return (Math.round(num * base) / base).toFixed(precision);
+        }
+
+        class ReseauDeNeurones {
+            constructor(...args) {
+                this.neuronesCoucheEntree = args[0];
+                this.neuronesCoucheCachee = args[1];
+                this.neuronesCoucheSortie = args[2];
+
+                this.epoques = 60000;
+                this.activation = sigmoide; 
+                this.gainGradient = 1.0;
+                this.sortie = 0; 
+
+                //Initialisation des poids (ou paramètres) au hasard
+                // afficherMessage("Initialisation des poids au hasard");
+                sortie_affichage_calcul.innerHTML += "*** Initialisation des poids au hasard";
+                this.poidsCoucheCachee = math.random([this.neuronesCoucheEntree, this.neuronesCoucheCachee], 0.5, 1.0);
+                // afficherMessage("Poids de la couche cachée: " + this.poidsCoucheCachee);
+                sortie_affichage_calcul.innerHTML += " *** Poids de la couche cachée: " + this.poidsCoucheCachee;
+                this.poidsCoucheSortie = math.random([this.neuronesCoucheCachee, this.neuronesCoucheSortie], 0.5, 1.0);
+                // afficherMessage("Poids de la couche de sortie: " + this.poidsCoucheSortie);
+                sortie_affichage_calcul.innerHTML += " *** Poids de la couche de sortie: " + this.poidsCoucheSortie;
+            }
+            setEpoques(numEpoques) {
+                this.epoques = numEpoques;
+            }
+            setActivation(func) {
+                switch (func) {
+                    case 'tanh': {
+                        this.activation = tanh;
+                        break;
+                    }
+                    case 'relu': {
+                        this.activation = relu;
+                        break;
+                    }
+                    case 'softplus': {
+                        this.activation = softplus;
+                        break;
+                    }
+                    default: {
+                        this.activation = sigmoide;
+                        break;
+                    } 
+                }
+            }
+            setGainGradient(gainGradient) {
+                this.gainGradient = gainGradient;
+            }
+            entrainer(attributsDonneesEntree, etiquettesCibles) {
+                for (let i = 0; i < this.epoques; i++) {
+                    // Propagation avant
+                    let coucheEntree = attributsDonneesEntree;
+                    let coucheCacheeLineaire = math.multiply(coucheEntree, this.poidsCoucheCachee)
+                    let coucheCacheeActivee = coucheCacheeLineaire.map(v => this.activation(v, false));
+                    let coucheSortieLineaire = math.multiply(coucheCacheeActivee, this.poidsCoucheSortie)
+                    let coucheSortieActivee = coucheSortieLineaire.map(v => this.activation(v, false));
+                    // Calcul de l'erreur de la sortie
+                    let erreurSortie = math.subtract(etiquettesCibles, coucheSortieActivee);
+                    if (i % 10000 == 0) {
+                        // afficherMessage("Itération: " + i + " - Gain du gradient: " + this.gainGradient + " - Erreur: " + 
+                        //    math.mean(math.abs(erreurSortie)));
+                        sortie_affichage_calcul.innerHTML += " *** Itération: " + i + " - Gain du gradient: " + this.gainGradient + " - Erreur: " + 
+                            math.mean(math.abs(erreurSortie));
+                    }
+                    // Rétropropagation de l'erreur de sortie dans la couche de sortie
+                    let gradientErreurSortie = math.dotMultiply(erreurSortie, math.multiply(coucheCacheeActivee, this.poidsCoucheSortie).map(v => this.activation(v, true)));
+                    // Ajustement des poids de la couche de sortie
+                    this.poidsCoucheSortie = math.add(this.poidsCoucheSortie, math.multiply(math.transpose(coucheCacheeActivee), math.multiply(gradientErreurSortie, this.gainGradient)));
+                    // Rétropropagation de l'erreur de la couche de sortie vers la couche cachée
+                    let erreurCoucheCachee = math.multiply(gradientErreurSortie, math.transpose(this.poidsCoucheSortie));
+                    let gradientErreurCoucheCachee = math.dotMultiply(erreurCoucheCachee, coucheCacheeLineaire.map(v => this.activation(v, true)));
+                    // Ajustement des poids de la couche cachée
+                    this.poidsCoucheCachee = math.add(this.poidsCoucheCachee, math.multiply(math.transpose(coucheEntree), math.multiply(gradientErreurCoucheCachee, this.gainGradient)));
+                };
+                // afficherMessage('Entraînement terminé');
+                sortie_affichage_calcul.innerHTML += " *** Entraînement terminé";
+            }
+            predict(attributsDonneesEntree) {
+                let coucheEntree = attributsDonneesEntree;
+                let coucheCacheeActivee = math.multiply(coucheEntree, this.poidsCoucheCachee).map(v => this.activation(v, false));
+                let coucheSortieActivee = math.multiply(coucheCacheeActivee, this.poidsCoucheSortie).map(v => this.activation(v, false));
+                return coucheSortieActivee;
+            }
+        }
+        // Perceptron
+        var sortie_affichage_calcul = document.getElementById('affichage_du_calcul');
+
+        // afficherMessage('Perceptron');
+        // afficherMessage('Initialisation des données');
+        // afficherMessage("OU EXCLUSIF logique (XOR)")
+        const attributsDonneesEntree = math.matrix([[0,0], [0,1], [1,0], [1,1]]);
+        const etiquettesCibles = math.matrix([[0], [1], [1], [0]]);
+        // afficherMessage("OU logique")
+        // const attributsDonneesEntree = math.matrix([[0,0], [0,1], [1,0], [1,1]]);
+        // const etiquettesCibles = math.matrix([[0], [1], [1], [1]]);
+
+        // afficherMessage("Création d'un perceptron à une couche cachée de 2 neurones et un neurone de sortie");
+        sortie_affichage_calcul.innerHTML += "*** Création d'un perceptron à une couche cachée de 2 neurones et un neurone de sortie";
+
+        const perceptron = new ReseauDeNeurones(2, 2, 1);
+
+        // afficherMessage("Entraînement du perceptron");
+        sortie_affichage_calcul.innerHTML += " *** Entraînement du perceptron";
+        perceptron.entrainer(attributsDonneesEntree, etiquettesCibles);
+
+        // afficherMessage("Prédiction du perceptron");
+        sortie_affichage_calcul.innerHTML += " *** Prédiction du perceptron";
+        // afficherMessage("Vraies étiquettes: " + etiquettesCibles);
+        sortie_affichage_calcul.innerHTML += " *** Vraies étiquettes: " + etiquettesCibles;
+        // afficherMessage("Étiquettes prédites: " + perceptron.predict(attributsDonneesEntree));
+        sortie_affichage_calcul.innerHTML += " *** Étiquettes prédites: " + perceptron.predict(attributsDonneesEntree);
+        sortie_affichage_calcul.innerHTML += " ***"
+    </script>
+    
+    <style>
+
+      /* 
+         Couleur bordure: #3D85C6
+         Remplissage: #CFE2F3FF
+      */
+
+      * {
+        background-color: white; 
+        border:none;
+      }
+
+
+      p {
+        font-size: 150%;
+      }
+
+      li {
+        font-size: 150%;
+      }
+
+      /* Create two columns that floats next to each other */
+      /* Clear floats after the columns */
+
+      #simulateur_perceptron {
+        border: 4px solid;
+        border-radius: 10px;
+        border-color: #3D85C6;
+        width: 100%;
+        min-width: 1580px;
+        max-width: 1580px;
+      }
+
+      #titre_simulateur {
+        font-weight: bold;
+        font-size: 200%;
+      }
+
+      .reseau_neurones {
+        position: relative;
+        top: 13px;
+        left: 48px;
+        z-index: 0;
+      }
+
+/* biais neurone 1 */
+
+      #biais_nc1 {
+        position: absolute;
+        top: 300px;
+        left: 80px;
+      }
+
+      #image_biais {
+        height: 40px;
+        width: 40px;
+      }
+
+      #affichage_entree_biais_nc1_0 {
+        position:absolute;
+        color:#d1d1d1;
+        top: 302px;
+        left: 125px;
+      }
+
+      #affichage_entree_biais_nc1_1 {
+        position:absolute;
+        /* color:#d1d1d1; */
+        top: 324px;
+        left: 125px;
+      }
+
+      #glissiere_poids_biais_nc1 {
+        position:absolute;
+        width: 130px;  
+        top: 316px;
+        left: 166px;
+      }
+
+      #affichage_glissiere_poids_biais_nc1 {
+        position:absolute;
+        top: 314px;
+        left: 313px;
+      }
+
+/* entrée 1 */
+
+      #glissiere_poids_entree1_nc1 {
+        position:absolute;
+        width: 130px;  
+        top: 365px;
+        left: 165px;
+        /* z-index: 80; */
+      }
+
+      #affichage_glissiere_poids_entree1_nc1 {
+        position:absolute;
+        top: 363px;
+        left: 136px;
+      }
+
+/* entrée 2 */
+
+      #glissiere_poids_entree2_nc1 {
+        position:absolute;
+        width: 130px;  
+        top: 420px;
+        left: 165px;
+      }
+
+      #affichage_glissiere_poids_entree2_nc1 {
+        position:absolute;
+        top: 420px;
+        left: 310px;
+      }
+
+      #glissiere_poids_entree1_nc2 {
+        position: absolute;
+        width: 135px;  
+        top: 490px;
+        left: 166px;
+      }
+
+      #affichage_glissiere_poids_entree1_nc2 {
+        position: absolute;
+        top: 490px;
+        left: 310px;
+      }
+
+      #glissiere_poids_entree2_nc2 {
+        position:absolute;
+        width: 130px;  
+        top: 544px;
+        left: 166px;
+      }
+
+      #affichage_glissiere_poids_entree2_nc2 {
+        position:absolute;
+        top: 545px;
+        left: 120px;
+      }
+
+/* biais neurone caché 2 */
+
+      #biais_nc2 {
+        position: absolute;
+        top: 590px;
+        left: 75px;
+      }
+
+      #affichage_entree_biais_nc2_0 {
+        position:absolute;
+        color:#d1d1d1;
+        top: 591px;
+        left: 121px;
+      }
+
+      #affichage_entree_biais_nc2_1 {
+        position:absolute;
+        top: 616px;
+        left: 121px;
+      }
+
+      #glissiere_poids_biais_nc2 {
+        position:absolute;
+        width: 130px;  
+        top: 606px;
+        left: 168px;
+      }
+
+      #affichage_glissiere_poids_biais_nc2 {
+        position:absolute;
+        top: 605px;
+        left: 308px;
+      }
+
+/* biais neurone de sortie */
+
+      #biais_ns {
+        position: absolute;
+        height:30px;
+        width:30px;
+        top: 444px;
+        left: 420px;
+      }
+
+      #affichage_entree_biais_ns_0 {
+        position:absolute;
+        color:#d1d1d1;
+        top: 446px;
+        left: 466px;
+      }
+
+
+      #affichage_entree_biais_ns_1 {
+        position:absolute;
+        top: 466px;
+        left: 466px;
+      }
+
+     #glissiere_poids_biais_ns {
+        position:absolute;
+        width: 130px;  
+        top: 458px;
+        left: 528px;
+      }
+
+      #affichage_glissiere_poids_biais_ns {
+        position:absolute;
+        top: 455px;
+        left: 660px;
+      }
+
+/* Entrées neurone de sortie */
+
+      #glissiere_poids_entree1_ns {
+        position:absolute;
+        width: 135px;  
+        top: 404px;
+        left: 530px;
+      }
+
+      #affichage_glissiere_poids_entree1_ns {
+        position:absolute;
+        top: 404px;
+        left: 686px;
+      }
+
+
+      #glissiere_poids_entree2_ns {
+        position:absolute;
+        width: 135px;  
+        top: 500px;
+        left: 528px;
+      }
+
+      #affichage_glissiere_poids_entree2_ns {
+        position:absolute;
+        top: 500px;
+        left: 690px;
+      }
+
+/* ----- */
+
+      #somme_ponderee {
+        font-weight: bold;
+        font-size: 150%;
+        margin-left:160px;            
+      }
+
+      #activation {
+        font-weight: bold;
+        font-size: 150%;
+        margin-left:25px;           
+      }
+    
+      #sortie_du_neurone {
+        font-weight: bold;
+        font-size: 150%;
+        margin-left:200px;            
+      }
+
+      #calcul_neurone {
+        margin-left: 180px;
+        font-weight: bold;
+        font-size: 150%;      
+      }
+
+      #calcul_neurone_2 {
+        margin-left: 210px;
+        font-weight: bold;
+        font-size: 150%;      
+      }
+
+      #image_fond_neurone_sommation {
+        padding-bottom:50px;
+        margin-right:0px;
+        border-right:0px;
+        padding-right:0px;      
+      }
+
+      #image_bouton_sommation {
+        width:100px;
+        height:100px;
+      }
+
+      #bouton_sommation {
+        width:100px;
+        height:100px;
+        margin-left:0px;
+        border-left:0px;
+          padding-left:0px;     
+        position:relative;
+        left:-118px;
+        bottom:104px;
+      }
+      
+      #image_fond_neurone_activation {
+        padding-bottom:50px;
+        margin-right:0px;
+        border-right:0px;
+          padding-right:0px;      
+        position:relative;
+        left:-108px;
+      }
+
+      #image_bouton_activation {  
+      } 
+
+      #bouton_activation {
+        width:100px;
+        height:100px;
+          border-radius: 10px;
+        margin-left: 0px;
+        border-left: 0px;
+          padding-left: 0px;
+        position:relative;
+        left:-242px; 
+              bottom:104px;
+      } 
+
+      .bouton_sortie {
+        border:none;
+        margin-left: 0px;
+        border-left: 0px;
+          padding-left: 0px;
+      }   
+
+      #image_fleche_sortie {
+        position:relative;
+        width:150px;
+        bottom:140px;
+        left:-210px;
+      }
+
+      #image_sortie_activation {
+        position:relative; 
+        bottom:130px;
+        left:-210px;
+        height:50px;
+      }
+
+      .menu_deroulant_infobulle {
+        /* text-align: center; */
+        position: relative;
+        margin-left:12px;
+        /* border: 4px solid;*/
+        border-radius: 10px;
+        /* border-color: #3D85C6; */
+        color:red; 
+        /* background-color: #CFE2F3FF; */
+      }
+
+      #affichage_activation {
+        font-weight: bold;
+        font-size: 200%;
+        position:relative; 
+        bottom:146px;
+        left:-215px;
+      }
+
+      #declenchement {
+        position: absolute;
+        width:50px;
+        top:-20px;
+        left:380px;
+        visibility:hidden;
+      }
+
+      /*  https://www.w3schools.com/howto/howto_custom_select.asp */
+
+      /*the container must be positioned relative:*/
+      .menu_deroulant {
+        position: relative;
+        font-family: Arial;
+        /* Modif */
+        margin-left: 350px;
+        width: 150px;
+        border-radius: 10px;
+      }
+
+      .menu_deroulant select {
+        display: none; /*hide original SELECT element:*/
+      }
+
+      .select-selected {
+        /* Modif */
+        /* background-color: DodgerBlue; */
+        background-color: #CFE2F3FF;
+      }
+
+      /*style the arrow inside the select element:*/
+      .select-selected:after {
+        position: absolute;
+        content: "";
+        /* top: 14px; */
+        right: 10px;
+        width: 0;
+        height: 0;
+        border: 6px solid transparent;
+        /* border-color: #fff transparent transparent transparent; */
+        border-color: #000000 transparent transparent transparent;
+      }
+
+      /*point the arrow upwards when the select box is open (active):*/
+      .select-selected.select-arrow-active:after {
+        border-color: transparent transparent #fff transparent;
+        top: 7px;
+      }
+
+      /*style the items (options), including the selected item:*/
+      .select-items div,.select-selected {
+        /* Modif */
+        /* color: #ffffff; */
+        color: red;
+        padding: 8px 16px;
+        /* Modif */
+        /* border: 1px solid transparent; */
+        border: 4px solid transparent;
+        border-radius: 10px;
+
+        /* Modif */
+        /* border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent; */
+        border-color: #3D85C6;
+        cursor: pointer;
+        user-select: none;
+        /* Modif */
+        background-color: #CFE2F3FF;
+      }
+
+      /*style items (options):*/
+      .select-items {
+        position: absolute;
+        /* Modif */
+        /* background-color: DodgerBlue; */
+        background-color: #CFE2F3FF;      
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+      }
+
+      /*hide the items when the select box is closed:*/
+      .select-hide {
+        display: none;
+      }
+
+      .select-items div:hover, .same-as-selected {
+        background-color: rgba(0, 0, 0, 0.1);
+      }   
+
+      #afficheur_calcul_du_neurone {
+        border: 4px solid;
+        border-radius: 10px 10px 10px 10px;
+        border-color: #3D85C6;
+        height: 125px;
+        margin-top: 5px;
+      }
+
+      #titre_afficheur {
+        background-color: white;
+        font-weight: bold;
+        font-size: 100%;
+        padding-top: 5px;
+        /* padding-bottom: 5px; */
+      }
+
+      #afficheur_parametres_simulation {
+        position:absolute;
+        left:1000px;
+        border: 4px solid;
+        border-radius: 10px 10px 10px 10px;
+        border-color: #3D85C6;
+        height: 200px;
+        margin-top: 5px;
+      }
+
+      #affichage_du_calcul{
+        height:auto;
+        width:auto;
+      }
+
+      .contenant_glissiere {
+         z-index: -1;
+
+        /* bottom:22px; */
+      }
+
+      .glissiere_entree {
+        -webkit-appearance: none;
+        /* width: 100%; */
+        width: 150px;
+        height: 15px;
+        border-radius: 5px; 
+        border: 1px solid;
+        border-color: #3D85C6;
+        /* background: #d3d3d3; */
+        background: #CFE2F3FF;
+        outline: none;
+        /* opacity: 0.7; */
+        -webkit-transition: .2s;
+        /* transition: opacity .2s; */
+      }
+
+      .glissiere_entree::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        /* width: 23px; */
+        width: 76px;
+        /* height: 24px; */
+        height: 59px;
+        border: 0;
+        background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@entree.png");
+        cursor: pointer;
+      }
+
+      .glissiere_entree::-moz-range-thumb {
+        /* width: 23px; */
+          width: 76x;
+          /* height: 24px; */
+          height: 59px;
+          border: 0;
+          background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@entree.png");
+          cursor: pointer;
+      }
+
+      .glissiere_entree::-ms-thumb {
+           width: 76x; 
+           height: 59px; 
+/*          width: 10px;
+          height: 10px; 
+*/          border: 0;
+          /* Icons made by Freepik - https://www.flaticon.com/authors/freepik */
+          background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@ponderation.png");
+          cursor: pointer;
+      }
+
+      .glissiere_poids {
+        -webkit-appearance: none;
+        /* width: 100%; */
+        width: 135px;
+        height: 8px;
+        border-radius: 5px; 
+        border: 1px solid;
+        border-color: #3D85C6;
+        /* background: #d3d3d3; */
+        background: #CFE2F3FF;
+        outline: none;
+        /* opacity: 0.7; */
+        -webkit-transition: .2s;
+        /* transition: opacity .2s; */
+      }
+
+      .glissiere_poids::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+ /*     width: 62px;
+        height: 62px; 
+*/        
+        width: 40px;
+        height: 40px; 
+        border: 0;
+          /* Icons made by Freepik - https://www.flaticon.com/authors/freepik */
+        background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@ponderation.png");
+        background-size: 40px 40px;
+        cursor: pointer;
+      }
+
+      .glissiere_poids::-moz-range-thumb {
+ /*     width: 62px;
+        height: 62px; 
+*/        
+        width: 40px;
+        height: 40px; 
+        border: 0;
+        /* Icons made by Freepik - https://www.flaticon.com/authors/freepik */
+        background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@ponderation.png");
+        background-size: 40px 40px;
+        cursor: pointer;
+      }
+
+      .glissiere_poids::-ms-thumb {
+ /*     width: 62px;
+        height: 62px; 
+*/        
+        width: 40px;
+        height: 40px; 
+        border: 0;
+        /* Icons made by Freepik - https://www.flaticon.com/authors/freepik */
+        background: url("https://cours.edulib.org/asset-v1:Cegep-Matane+VAERN.1FR+P2021+type@asset+block@ponderation.png");
+        background-size: 40px 40px;
+        cursor: pointer;
+      }
+
+      /* https://www.w3schools.com/howto/howto_css_tooltip.asp */
+
+      .infobulle {
+        display: inline-block;
+      }
+
+      .infobulle .infobulletexte {
+          visibility: hidden;
+          width: 120px;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          /* Position the infobulle */
+          position: absolute;
+          z-index: 1;
+      }
+
+      .infobulle:hover .infobulletexte {
+          visibility: visible;
+      }
+
+      #tab_simulateur {
+        min-width: 1580px;
+          max-width: 1580px;
+      }
+
+      #tab_exercices {
+        min-width: 1580px;
+          max-width: 1580px;
+      }
+
+      .titre_exercice {
+        font-size: 150%;
+        font-weight: bold;  
+      }
+
+      /* Style the tab */
+      /* https://www.w3schools.com/howto/howto_js_tabs.asp */
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Style the buttons inside the tab */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Change background color of buttons on hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+
+      /* Create an active/current tablink class */
+      .tab button.active {
+        background-color: #CFE2F3FF;
+      }
+
+      /* Style the tab content */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }
+
+      #bouton_suivant {
+        background-color: #CFE2F3FF;
+        border: 4px solid #3D85C6;
+        border-radius: 5px;
+        font-size: 20px;
+      }
+
+      #bouton_demarrer {
+        margin-left: 50px;
+        background-color: #CFE2F3FF;
+        border: 4px solid #3D85C6;
+        border-radius: 5px;
+        font-size: 20px;
+      }
+
+      #bouton_demarrer:active {
+        margin-left: 50px;
+        box-shadow: 0 0 0 black;
+        background-color:#3D85C6;
+      }
+
+      .parent {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+
+      .choix_fonction_logique {
+      }
+
+    </style>
+  </body>
+</html>
