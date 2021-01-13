@@ -5,7 +5,7 @@
   <!-- et Andrew Trask: https://iamtrask.github.io/2015/07/12/basic-python-network/ -->
   <!-- Refactorisation et améliorations de Claude COULOMBE -->
   <head>
-    <title>Simulation d'un perceptron simple à un seul neurone</title>
+    <title>Perceptron simple</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
@@ -17,9 +17,29 @@
       <div class="parent">
           <div>
             <img class="perceptron" src="perceptron.png"/>
+            <label id="boucle_donnees">boucle sur<br>les données</label>
+            <label id="donnees_entrainement">données<br>d'entraînement</label>
+            <label id="boucle_epoques">boucle sur les<br>itérations ou époques<br>d'entraînement</label>
+            <label id="affichage_donnee_1">0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0</label>
+            <label id="affichage_donnee_2">0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0</label>
+            <label id="affichage_donnee_3">1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0</label>
+            <label id="affichage_donnee_4">1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1</label>
+            <label id="attributs">attributs</label>
+            <label id="classe_etiq_cible">classe ou<br>étiquette-cible</label>
             <img class="glisssiere_poids_biais_dynamique" src="ponderation.png" />
+            <label id="biais">biais</label>
+            <label id="entree_1">entrée 1</label>
+            <label id="entree_2">entrée 2</label>
+            <label id="poids_biais">0.0</label>
             <img class="glisssiere_poids_1_dynamique" src="ponderation.png" />
+            <label id="poids_1">0.0</label>
             <img class="glisssiere_poids_2_dynamique" src="ponderation.png" />
+            <label id="poids_2">0.0</label>
+            <label id="neurone">neurone</label>
+            <label id="erreur">calcul<br>d'erreur</label>
+            <label id="etiq_cible">étiquette<br>cible</label>
+            <label id="prediction_etiq_cible">prédiction<br>étiquette-cible</label>
+            <label id="ajustement_poids">ajustement des poids /<br>rétropropagation de l'erreur</label>
             <label id="affichage_activation"></label>
             <img id="declenchement" src="declenchement.png">
           </div>
@@ -187,6 +207,7 @@
             this.epoques = epoques;
             this.exactitude = 0;
             this.neurone = new Neurone(attributs_entrainement[0], null, 1.0, 1.0, 'echelon');
+            this.echec_entrainement = false;
             // this.afficher();
           }
           afficher(indicateur=true) {
@@ -199,6 +220,7 @@
               afficherMessage("Gain gradient: "+this.gain_gradient);
               afficherMessage("Nombre d'époques: "+this.epoques);
               afficherMessage("Exactitude: "+this.exactitude);
+              afficherMessage("Échec de l'entraînement: "+this.echec_entrainement);
               afficherMessage("");
            }
           }
@@ -210,6 +232,7 @@
           }
           // Entraîner le Perceptron sur des données
           entrainer() {
+            this.echec_entrainement = false;
             // Pour chaque époque (passage dans le jeu des données d'entraînement) itérer
             sortie_affichage_calcul.innerHTML += " *** ";
             for ( var epoque = 0; epoque <= this.epoques; epoque++) {
@@ -234,19 +257,32 @@
               }
               // Afficher l'exactitude après chaque époque (passage dans le jeu des données d'entraînement)
               var message_exactitude = " Exactitude: "+ arrondir(this.exactitude/this.nombre_exemples)+" ***";
+
               // Afficher l'exactitude à toutes les 10 époques
               if ( (epoque % 10) === 0) {
                 sortie_affichage_calcul.innerHTML += " Nbr époques: " + epoque + ", ";
                 sortie_affichage_calcul.innerHTML += message_exactitude;
-                //sortie_affichage_calcul.innerHTML += message_exactitude + "<br>";
+                // Ne fonctionne pas encore...
+                // attendre(500);
               }
             }
-            // afficherMessage("Fin entraînement du perceptron");
+            // Si l'exactitude est inférieure à 90% alors l'entraînement a échoué
+            if ( arrondir(this.exactitude/this.nombre_exemples) < 0.9 ) {
+              sortie_affichage_calcul.innerHTML += "Échec de l'entraînement! ***"
+              this.echec_entrainement = true;
+            } else {
+              this.echec_entrainement = false;
+            }
           }
           afficher_poids_modele() {
-            sortie_affichage_calcul.innerHTML += " Après entraînement: poids du biais: "+arrondir(this.neurone.poids_biais)+
-                                                 ", poids entree 1: "+arrondir(this.neurone.poids_donnees_entree[0])+
-                                                 ", poids entree 2: "+arrondir(this.neurone.poids_donnees_entree[1]) + " ***";
+            if ( ! this.echec_entrainement ) {
+              sortie_affichage_calcul.innerHTML += " Après entraînement: poids du biais: "+arrondir(this.neurone.poids_biais)+
+                                                   ", poids entree 1: "+arrondir(this.neurone.poids_donnees_entree[0])+
+                                                   ", poids entree 2: "+arrondir(this.neurone.poids_donnees_entree[1]) + " ***";
+            }
+            document.getElementById('poids_biais').innerHTML = arrondir(this.neurone.poids_biais);
+            document.getElementById('poids_1').innerHTML = arrondir(this.neurone.poids_donnees_entree[0]);
+            document.getElementById('poids_2').innerHTML = arrondir(this.neurone.poids_donnees_entree[1]);
           }
         }
 
@@ -268,6 +304,14 @@
           }
         }
         
+        function attendre(tempsAttente) {
+          const tempsOrigine = Date.now();
+          let tempsMaintenant = null;
+          do {
+            tempsMaintenant = Date.now();
+          } while (tempsMaintenant - tempsOrigine < tempsAttente);
+        }
+
         // Initialisation de valeurs par défaut
         var calcul_a_afficher = "Apprentissage d'une fonction logique ET - Données d'entraînement: [[0,0],[0,1],[1,0],[1,1]] - Étiquettes cibles: [0,0,0,1]";
         var attributs_entrainement = [[0, 0], [0, 1], [1, 0], [1, 1]];
@@ -315,69 +359,76 @@
       function entrer_valeur_dattribut(bouton_id) {
         // alert("bouton_id="+bouton_id);
         calcul_a_afficher = "";
+        document.getElementById('poids_biais').innerHTML = "0.0";
+        document.getElementById('poids_1').innerHTML = "0.0";
+        document.getElementById('poids_2').innerHTML = "0.0";
         switch(bouton_id) {
           case "ET":
             etiquettes_cibles = [0, 0, 0, 1];
             calcul_a_afficher += "Apprentissage d'une fonction logique ET"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             break;
           case "OU":
             etiquettes_cibles = [0, 1, 1, 1];
             calcul_a_afficher += "Apprentissage d'une fonction logique OU"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             break;
           case "NON":
             etiquettes_cibles = [1, 1, 0, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             break;
           case "NON_ET":
             etiquettes_cibles = [1, 1, 1, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON ET"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             break;
           case "NON_OU":
             etiquettes_cibles = [1, 0, 0, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON OU"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             break;
           case "OU_EXCLUSIF":
             etiquettes_cibles = [0, 1, 1, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique OU Exclusif"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
             calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
+            document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
+            document.getElementById('affichage_donnee_4').innerHTML = "1,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             break;
           default:
             console.log("*** ERREUR entrer_valeur_dattribut ***");
               alert("*** ERREUR entrer_valeur_dattribut ***");
         }
       }
-
-      /* If the user clicks anywhere outside the select box,
-      then close all select boxes: */
-      // document.addEventListener("click", closeAllSelect);
-
-      // var scrollUp = (function () {
-      //   var timerId; // stored timer in case you want to use clearInterval later
-      //   return function (height, times, element) {
-      //     var i = 0; // a simple counter
-      //     timerId = setInterval(function () {
-      //       if (i > times) // if the last frame is reached, set counter to zero
-      //         i = 0;
-      //       element.style.backgroundPosition = "0px -" + i * height + 'px'; //scroll up
-      //       i++;
-      //     }, 100); // every 100 milliseconds
-      //   };
-      // })();
-
-      // // start animation:
-      // scrollUp(14, 42, document.getElementById('anim'))
-
+      
   </script>
 
   <style>
@@ -458,8 +509,222 @@
 
       #ponderation {
         font-weight: bold;
-        font-size: 150%;
+        font-size: 120%;
         margin-left:85px;   
+      }
+
+      #boucle_epoques {
+        position:absolute;
+        font-size:140%;
+        text-align:center;
+        top:38px;
+        left:576px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #boucle_donnees {
+        position:absolute;
+        font-size:110%;
+        text-align:center;
+        top:141px;
+        left:204px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #donnees_entrainement {
+        position:absolute;
+        font-size:100%;
+        text-align:center;
+        top:145px;
+        left:70px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #affichage_donnee_1 {
+        position:absolute;
+        top:191px;
+        left:152px;
+        background-color:#CFE2F3FF; 
+        opacity:0.6;  
+        z-index:99;
+      }
+      #affichage_donnee_2 {
+        position:absolute;
+        top:215px;
+        left:152px;
+        background-color:#CFE2F3FF;   
+        opacity:0.6;
+        z-index:99;        
+      }
+      #affichage_donnee_3 {
+        position:absolute;
+        top:239px;
+        left:152px;
+        background-color:#CFE2F3FF;   
+        opacity:0.6;
+        z-index:99;        
+      }
+      #affichage_donnee_4 {
+        position:absolute;
+        top:262px;
+        left:152px;
+        background-color:#CFE2F3FF;   
+        opacity:0.6;
+        z-index:99;                
+      }
+
+      .glisssiere_poids_biais_dynamique {
+        position:absolute;
+        height:60px;
+        width:60px;
+        top:352px;
+        left:187px;
+      }
+
+      .glisssiere_poids_1_dynamique {
+        position:absolute;
+        height:60px;
+        width:60px;
+        top:420px;
+        left:187px;
+      }
+
+      .glisssiere_poids_2_dynamique {
+        position:absolute;
+        height:60px;
+        width:60px;
+        top:524px;
+        left:187px;
+      }
+
+      #poids_biais {
+        position:absolute;
+        top:352px;
+        left:248px;
+        opacity:0.6;
+      }
+
+      #poids_1 {
+        position:absolute;
+        top:420px;
+        left:248px;
+        opacity:0.6;
+      }
+
+      #poids_2 {
+        position:absolute;
+        top:563px;
+        left:248px;
+        opacity:0.6;
+      }
+
+      #attributs {
+        position:absolute;
+        font-size:120%;
+        color:#3D85C6;
+        text-align:center;
+        top:220px;
+        left:30px;
+        opacity:0.6;
+        z-index:99;
+      }
+      #classe_etiq_cible {
+        position:absolute;
+        font-size:120%;
+        color:#3D85C6;
+        text-align:center;
+        top:190px;
+        left:440px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #biais {
+        position:absolute;
+        font-size:120%;
+        /* color:#3D85C6; */
+        text-align:center;
+        top:338px;
+        left:92px;
+        opacity:0.6;
+        z-index:99;
+      }
+      #entree_1 {
+        position:absolute;
+        font-size:120%;
+        /* color:#3D85C6; */
+        text-align:center;
+        top:467px;
+        left:80px;
+        opacity:0.6;
+        z-index:99;
+      }
+      #entree_2 {
+        position:absolute;
+        font-size:120%;
+        /* color:#3D85C6; */
+        text-align:center;
+        top:569px;
+        left:80px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #neurone {
+        position:absolute;
+        font-size:180%;
+        /* color:#3D85C6; */
+        text-align:center;
+        top:390px;
+        left:400px;
+        opacity:0.6;
+        z-index:99;
+      }
+
+      #etiq_cible {
+        position:absolute;
+        font-size:100%;
+        color:#3D85C6;
+        text-align:center;
+        top:420px;
+        left:580px;
+        opacity:0.6;
+        z-index:99;
+      }
+      #prediction_etiq_cible {
+        position:absolute;
+        font-size:100%;
+        color:#3D85C6;
+        text-align:center;
+        top:515px;
+        left:535px;
+        opacity:0.6;
+        z-index:99;
+      }
+     
+      #erreur {
+        position:absolute;
+        font-size:130%;
+        /* color:#3D85C6; */
+        text-align:center;
+        top:475px;
+        left:628px;
+        opacity:0.5;
+        z-index:99;
+      }
+
+      #ajustement_poids {
+        position:absolute;
+        font-size:120%;
+        color:#3D85C6;
+        text-align:center;
+        top:590px;
+        left:230px;
+        opacity:0.6;
+        z-index:99;
       }
 
       #affichage_entree_binaire_biais_1 {
@@ -609,7 +874,7 @@
         height:100px;
         margin-left:0px;
         border-left:0px;
-          padding-left:0px;     
+        padding-left:0px;     
         position:relative;
         left:-118px;
         bottom:104px;
@@ -619,7 +884,7 @@
         padding-bottom:50px;
         margin-right:0px;
         border-right:0px;
-          padding-right:0px;      
+        padding-right:0px;      
         position:relative;
         left:-108px;
       }
@@ -630,20 +895,20 @@
       #bouton_activation {
         width:100px;
         height:100px;
-          border-radius: 10px;
+        border-radius: 10px;
         margin-left: 0px;
         border-left: 0px;
-          padding-left: 0px;
+        padding-left: 0px;
         position:relative;
         left:-242px; 
-              bottom:104px;
+        bottom:104px;
       } 
 
       .bouton_sortie {
         border:none;
         margin-left: 0px;
         border-left: 0px;
-          padding-left: 0px;
+        padding-left: 0px;
       }   
 
       #image_fleche_sortie {
@@ -1016,36 +1281,8 @@
         /* border: 1px red solid; */
       }
 
-      .glisssiere_poids_biais_dynamique {
-        position: absolute;
-        height:60px;
-        width:60px;
-        top: 290px;
-        left:227px;
-        /* border: 1px green solid; */
-      }
-
-      .glisssiere_poids_1_dynamique {
-        position: absolute;
-        height:60px;
-        width:60px;
-        top: 375px;
-        left:227px;
-        /* border: 1px green solid; */
-      }
-
-      .glisssiere_poids_2_dynamique {
-        position: absolute;
-        height:60px;
-        width:60px;
-        top: 505px;
-        left:227px;
-        /* border: 1px green solid; */
-      }
-
       .choix_fonction_logique {
       }
-
 
     </style>
 
