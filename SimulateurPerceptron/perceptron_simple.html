@@ -62,6 +62,18 @@
                 <input type="submit" id="bouton_demarrer" value="Entra&icirc;ner" onclick="demarrer_simulateur()"</input>
               </div>
             </fieldset>
+            <fieldset id="afficheur_fonction_activation">
+            <legend id="titre_afficheur_fonction_activation">Svp, sélectionnez une fonction d'activation:</legend>
+            <div id="choix_fonction_activation">
+              <input type="radio" checked="checked" id="echelon" name="groupe_radio_2" value="echelon" onclick="entrer_fonction_activation(this.id)">
+              <label for="ET">échelon</label><br>
+              <input type="radio" id="sigmoide" name="groupe_radio_2" value="sigmoide" onclick="entrer_fonction_activation(this.id)">
+              <label for="OU">sigmoïde</label><br>
+              <input type="radio" id="tanh" name="groupe_radio_2" value="tanh" onclick="entrer_fonction_activation(this.id)">
+              <label for="NON">tangente hyperbolique</label><br>
+              <input type="radio" id="relu" name="groupe_radio_2" value="relu" onclick="entrer_fonction_activation(this.id)">
+              <label for="NON_ET">ReLU</label><br>
+            </fieldset>
           </div>
       </div>
       <br>
@@ -114,12 +126,12 @@
           // Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
           // Échelon ou échelon binaire (en anglais, binary step)     
           echelon(x) {
-              return x < 0 ? 0 : 1;
+              return (x <= 0) ? 0 : 1;
           }
           // Courbe en S verticale entre 0 et +1 
           // Appelée fonction sigmoïde ou fonction logistique
           sigmoide(x) {
-            return (1/(1 + Math.pow(Math.E, -x)));
+            return (1/(1 + Math.pow(Math.E,-x)));
           }
           // Fonction tanh ou tangente_hyperbolique
           tangente_hyperbolique(x) {
@@ -144,13 +156,15 @@
               case "echelon":
                 this.resultat_activation = this.echelon(x);
                 this.calcul_a_afficher = "&eacute;chelon( "+ arrondir(x) + " ) = " + arrondir(this.resultat_activation,2);
-                this.calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
+                this.calcul_a_afficher += " - Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement pour une valeur sup&eacute;rieure &agrave; z&eacute;ro";
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "sigmoide":
@@ -160,9 +174,11 @@
                 if (this.resultat_activation > 0.5) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "tanh":
@@ -172,21 +188,25 @@
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "relu":
                 this.resultat_activation = this.relu(x);
                 this.calcul_a_afficher = "relu( "+ arrondir(x,2) + " ) = " + arrondir(this.resultat_activation,2);
-                this.calcul_a_afficher += " - Activation: Rampe droite &agrave; 45 degr&eacute; ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement &agrave; z&eacute;ro";
+                this.calcul_a_afficher += " - Activation: Rampe droite &agrave; 45 degr&eacute; ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement pour une valeur sup&eacute;rieure &agrave; z&eacute;ro";
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               default:
@@ -206,7 +226,7 @@
             this.gain_gradient = gain_gradient;
             this.epoques = epoques;
             this.exactitude = 0;
-            this.neurone = new Neurone(attributs_entrainement[0], null, 1.0, 1.0, 'echelon');
+            this.neurone = new Neurone(attributs_entrainement[0], null, 1.0, 1.0, fonction_activation);
             this.echec_entrainement = false;
             // this.afficher();
           }
@@ -236,6 +256,9 @@
             // Pour chaque époque (passage dans le jeu des données d'entraînement) itérer
             sortie_affichage_calcul.innerHTML += " *** ";
             for ( var epoque = 0; epoque <= this.epoques; epoque++) {
+              this.exactitude = 0.0;
+              this.nombre_exemples = 0;
+              let exactitude = 0.0;
               // Pour chaque exemple de données d'entraînement, itérer sur les attributs
               for ( var i_attribut = 0; i_attribut < this.attributs_entrainement.length; i_attribut++ ) { 
                 // Faire une prédiction - chainage avant
@@ -266,9 +289,8 @@
                 // attendre(500);
               }
             }
-            // Si l'exactitude est inférieure à 90% alors l'entraînement a échoué
-            if ( arrondir(this.exactitude/this.nombre_exemples) < 0.9 ) {
-              sortie_affichage_calcul.innerHTML += "Échec de l'entraînement! ***"
+            // Si l'exactitude est inférieure à 50% alors l'entraînement a échoué
+            if ( arrondir(this.exactitude/this.nombre_exemples) < 0.5 ) {
               this.echec_entrainement = true;
             } else {
               this.echec_entrainement = false;
@@ -279,10 +301,12 @@
               sortie_affichage_calcul.innerHTML += " Après entraînement: poids du biais: "+arrondir(this.neurone.poids_biais)+
                                                    ", poids entree 1: "+arrondir(this.neurone.poids_donnees_entree[0])+
                                                    ", poids entree 2: "+arrondir(this.neurone.poids_donnees_entree[1]) + " ***";
+            } else {
+              sortie_affichage_calcul.innerHTML += "<br><strong>Échec de l'entraînement!</strong><br>"
             }
-            document.getElementById('poids_biais').innerHTML = arrondir(this.neurone.poids_biais);
-            document.getElementById('poids_1').innerHTML = arrondir(this.neurone.poids_donnees_entree[0]);
-            document.getElementById('poids_2').innerHTML = arrondir(this.neurone.poids_donnees_entree[1]);
+            // document.getElementById('poids_biais').innerHTML = arrondir(this.neurone.poids_biais);
+            // document.getElementById('poids_1').innerHTML = arrondir(this.neurone.poids_donnees_entree[0]);
+            // document.getElementById('poids_2').innerHTML = arrondir(this.neurone.poids_donnees_entree[1]);
           }
         }
 
@@ -313,9 +337,11 @@
         }
 
         // Initialisation de valeurs par défaut
-        var calcul_a_afficher = "Apprentissage d'une fonction logique ET - Données d'entraînement: [[0,0],[0,1],[1,0],[1,1]] - Étiquettes cibles: [0,0,0,1]";
+        var calcul_a_afficher = "Apprentissage d'une fonction logique ET - Données d'entraînement: [[0,0],[0,1],[1,0],[1,1]] - Étiquettes cibles: [0,0,0,1] - Fonction d'activation échelon";
         var attributs_entrainement = [[0, 0], [0, 1], [1, 0], [1, 1]];
         var etiquettes_cibles = [0, 0, 0, 1];
+
+        var fonction_activation = "echelon";
 
         var sortie_affichage_calcul = document.getElementById('affichage_du_calcul');
         var sortie_activation = document.getElementById('affichage_activation');
@@ -326,7 +352,7 @@
           perceptron.entrainer();
           perceptron.afficher_poids_modele();
           // Réinitialisation du message par défaut
-          calcul_a_afficher = "Apprentissage d'une fonction logique ET - Données d'entraînement: [[0,0],[0,1],[1,0],[1,1]] - Étiquettes cibles: [0,0,0,1]";
+          calcul_a_afficher = "Apprentissage d'une fonction logique ET - Données d'entraînement: [[0,0],[0,1],[1,0],[1,1]] - Étiquettes cibles: [0,0,0,1] - Fonction d'activation échelon";
           // Test sur le modèle entraîné
           // afficherMessage("Prédire [0, 0]: "+perceptron.predire([0, 0]));
           // afficherMessage("Prédire [1, 0]: "+perceptron.predire([1, 0]));
@@ -367,7 +393,8 @@
             etiquettes_cibles = [0, 0, 0, 1];
             calcul_a_afficher += "Apprentissage d'une fonction logique ET"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation + " - ";
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
@@ -377,7 +404,8 @@
             etiquettes_cibles = [0, 1, 1, 1];
             calcul_a_afficher += "Apprentissage d'une fonction logique OU"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation;
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
@@ -387,7 +415,8 @@
             etiquettes_cibles = [1, 1, 0, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation;
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
@@ -397,7 +426,8 @@
             etiquettes_cibles = [1, 1, 1, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON ET"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation;
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
@@ -407,7 +437,8 @@
             etiquettes_cibles = [1, 0, 0, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique NON OU"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation;
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;0";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
@@ -417,7 +448,8 @@
             etiquettes_cibles = [0, 1, 1, 0];
             calcul_a_afficher += "Apprentissage d'une fonction logique OU Exclusif"
             calcul_a_afficher += " - Données d'entraînement: "+"[["+attributs_entrainement.join("],[")+"]]";
-            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"] - ";
+            calcul_a_afficher += " - Étiquettes cibles: ["+etiquettes_cibles+"]";
+            calcul_a_afficher += " - Fonction d'activation " + fonction_activation;
             document.getElementById('affichage_donnee_1').innerHTML = "0,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;0";
             document.getElementById('affichage_donnee_2').innerHTML = "0,&nbsp;&nbsp;1,&nbsp;&nbsp;&nbsp;1";
             document.getElementById('affichage_donnee_3').innerHTML = "1,&nbsp;&nbsp;0,&nbsp;&nbsp;&nbsp;1";
@@ -429,6 +461,27 @@
         }
       }
       
+      function entrer_fonction_activation(bouton_id) {
+         // alert("bouton_id="+bouton_id);
+         switch(bouton_id) {        
+          case "echelon":
+            fonction_activation = "echelon";
+            break;
+          case "sigmoide":
+            fonction_activation = "sigmoide";
+            break;
+          case "tanh":
+            fonction_activation = "tanh";
+            break;
+          case "relu":
+            fonction_activation = "relu";
+            break;
+          default:
+            console.log("*** ERREUR entrer_fonction_activation ***");
+              alert("*** ERREUR entrer_fonction_activation ***");
+        }
+      }
+
   </script>
 
   <style>
@@ -1051,11 +1104,25 @@
       }
 
       #afficheur_parametres_simulation {
+        position:absolute;
+        top: 120px;
+        left: 900px;
         border: 4px solid;
         border-radius: 10px 10px 10px 10px;
         border-color: #3D85C6;
         height: 185px;
         margin-top: 5px;
+      }
+
+      #afficheur_fonction_activation {
+        position:absolute;
+        top: 400px;
+        left: 900px;
+        border: 4px solid;
+        border-radius: 10px 10px 10px 10px;
+        border-color: #3D85C6;
+        height: 100px;
+        margin-top: 5px;        
       }
 
       #affichage_du_calcul{
@@ -1265,6 +1332,20 @@
         background-color:#3D85C6;
         margin: 3px 0 0 0 ;
       }
+
+      #choisir_activation {
+        background-color: #CFE2F3FF;
+        border: 4px solid #3D85C6;
+        border-radius: 5px;
+        font-size: 20px;
+      }
+
+      #choisir_activation:active {
+        box-shadow: 0 0 0 black;
+        background-color:#3D85C6;
+        margin: 3px 0 0 0 ;
+      }
+
 
       .parent {
         display: flex;
