@@ -311,7 +311,7 @@
 			// Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
 			// Échelon ou échelon binaire (en anglais, binary step)			
 			echelon(x) {
-					return x < 0 ? 0 : 1;
+					return (x <= 0) ? 0 : 1;
 			}
 			// Courbe en S verticale entre 0 et +1 
 			// Appelée fonction sigmoïde ou fonction logistique
