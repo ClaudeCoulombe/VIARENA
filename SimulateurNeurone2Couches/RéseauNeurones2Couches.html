@@ -196,7 +196,7 @@
           // Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
           // Échelon ou échelon binaire (en anglais, binary step)     
           echelon(x) {
-              return x < 0 ? 0 : 1;
+              return (x <= 0) ? 0 : 1;
           }
           // Courbe en S verticale entre 0 et +1 
           // Appelée fonction sigmoïde ou fonction logistique
@@ -230,9 +230,11 @@
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "sigmoide":
@@ -242,9 +244,11 @@
                 if (this.resultat_activation > 0.5) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "tanh":
@@ -254,9 +258,11 @@
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               case "relu":
@@ -266,9 +272,11 @@
                 if (this.resultat_activation > 0.0) {
                   this.calcul_a_afficher += " - Notez que le neurone est 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = true;
+                  this.resultat_activation = 1.0;
                 } else {
                   this.calcul_a_afficher += " - Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
                   this.neurone_actif = false;
+                  this.resultat_activation = 0.0;
                 }
                 break;
               default:
