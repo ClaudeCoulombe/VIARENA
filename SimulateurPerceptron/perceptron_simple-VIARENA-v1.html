@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html>
+<!-- Travail original en JavaScript par John Fisher https://github.com/jg-fisher/perceptron -->
+<!-- Également inspiré par Petro Liashchynskyi: https://github.com/liashchynskyi/skynet/ -->
+<!-- et Andrew Trask: https://iamtrask.github.io/2015/07/12/basic-python-network/ -->
+<!-- Refactorisation, améliorations, prototypage: Claude COULOMBE - Lingua Technologies -->
+<!-- Mise en page web, SVG, animation, graphisme: Jonathan POULIOT - Collegia / CÉGEP de Matane -->
+
+<head>
+  <title>Perceptron simple</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* 
+         Couleur bordure: #3D85C6
+         Remplissage: #CFE2F3FF
+      */
+
+    * {
+      /* background-color: white; */
+      /* border: none; */
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      background-color: white;
+      border: none;
+
+      font-size: 16px;
+      font-size: 1em;
+      font-size: 1rem;
+
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 75% auto;
+    }
+
+    .simulateur {
+      position: relative;
+      border: 2px solid #d1d1d1;
+      margin: 3em 1em 0 2em;
+      padding: 1em;
+    }
+
+    .simulateur #page-title {
+      position: absolute;
+      top: -40px;
+      background-color: #fff;
+      display: inline;
+      padding: 0.5em;
+    }
+
+    #page-title #title {
+      font-size: 2.5rem;
+    }
+
+    .controls {
+      padding-top: 3em;
+      position: relative;
+      border: 2px solid #d1d1d1;
+      margin: 3em 2em 0 0;
+      padding: 1em;
+    }
+
+    .controls section {
+      margin-bottom: 2em;
+    }
+
+    .section-title {
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: block;
+      margin: 1em 0;
+    }
+
+    .logical-functions .section-title {
+      margin: 0;
+    }
+
+    .radio-container {
+      display: flex;
+      flex-direction: row;
+      margin: 1em 0;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      padding-left: 2.5em;
+      padding-top: 0.25em;
+    }
+
+    .radio-container input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      width: 0;
+      height: 0;
+    }
+
+    .radio-container .check {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 24px;
+      width: 24px;
+      background-color: #e1e1e1;
+      border-radius: 50%;
+      display: block;
+    }
+
+    .radio-container:hover input[type="radio"]~.check {
+      background-color: #d1d1d1;
+    }
+
+    .check:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .radio-container input[type="radio"]~.check:after {
+      display: block;
+    }
+
+    .radio-container input[type="radio"]:checked+.check:after {
+      top: 4px;
+      left: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #3d85c6;
+    }
+
+    .slider-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .iterations-slider {
+      flex: 1 0 auto;
+      appearance: none;
+      height: 10px;
+      background: #cfe2f3;
+      border-radius: 5px;
+      opacity: 0.7;
+      transition: 0.2s opacity ease-in-out;
+      margin-right: 0.5em;
+    }
+
+    .iterations-slider:hover {
+      opacity: 1;
+    }
+
+    .iterations-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMyIC0xNDcxKSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTMyIDE0NzEpIiBmaWxsPSIjZmZmIj48cGF0aCBkPSJNIDI0IDQ3LjUgQyAyMC44MjcyOTkxMTgwNDE5OSA0Ny41IDE3Ljc0OTc2OTIxMDgxNTQzIDQ2Ljg3ODczMDc3MzkyNTc4IDE0Ljg1Mjg5MDAxNDY0ODQ0IDQ1LjY1MzQ2MTQ1NjI5ODgzIEMgMTIuMDU0NTkwMjI1MjE5NzMgNDQuNDY5ODc5MTUwMzkwNjIgOS41NDEzNTAzNjQ2ODUwNTkgNDIuNzc1MzcxNTUxNTEzNjcgNy4zODI5ODk4ODM0MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyA1LjIyNDYyOTg3ODk5NzgwMyAzOC40NTg2NDg2ODE2NDA2MiAzLjUzMDExOTg5NTkzNTA1OSAzNS45NDU0MTE2ODIxMjg5MSAyLjM0NjUzOTk3NDIxMjY0NiAzMy4xNDcxMDk5ODUzNTE1NiBDIDEuMTIxMjY5OTQxMzI5OTU2IDMwLjI1MDIzMDc4OTE4NDU3IDAuNSAyNy4xNzI3MDA4ODE5NTgwMSAwLjUgMjQgQyAwLjUgMjAuODI3Mjk5MTE4MDQxOTkgMS4xMjEyNjk5NDEzMjk5NTYgMTcuNzQ5NzY5MjEwODE1NDMgMi4zNDY1Mzk5NzQyMTI2NDYgMTQuODUyODkwMDE0NjQ4NDQgQyAzLjUzMDExOTg5NTkzNTA1OSAxMi4wNTQ1OTAyMjUyMTk3MyA1LjIyNDYyOTg3ODk5NzgwMyA5LjU0MTM1MDM2NDY4NTA1OSA3LjM4Mjk4OTg4MzQyMjg1MiA3LjM4Mjk4OTg4MzQyMjg1MiBDIDkuNTQxMzUwMzY0Njg1MDU5IDUuMjI0NjI5ODc4OTk3ODAzIDEyLjA1NDU5MDIyNTIxOTczIDMuNTMwMTE5ODk1OTM1MDU5IDE0Ljg1Mjg5MDAxNDY0ODQ0IDIuMzQ2NTM5OTc0MjEyNjQ2IEMgMTcuNzQ5NzY5MjEwODE1NDMgMS4xMjEyNjk5NDEzMjk5NTYgMjAuODI3Mjk5MTE4MDQxOTkgMC41IDI0IDAuNSBDIDI3LjE3MjcwMDg4MTk1ODAxIDAuNSAzMC4yNTAyMzA3ODkxODQ1NyAxLjEyMTI2OTk0MTMyOTk1NiAzMy4xNDcxMDk5ODUzNTE1NiAyLjM0NjUzOTk3NDIxMjY0NiBDIDM1Ljk0NTQxMTY4MjEyODkxIDMuNTMwMTE5ODk1OTM1MDU5IDM4LjQ1ODY0ODY4MTY0MDYyIDUuMjI0NjI5ODc4OTk3ODAzIDQwLjYxNzAwODIwOTIyODUyIDcuMzgyOTg5ODgzNDIyODUyIEMgNDIuNzc1MzcxNTUxNTEzNjcgOS41NDEzNTAzNjQ2ODUwNTkgNDQuNDY5ODc5MTUwMzkwNjIgMTIuMDU0NTkwMjI1MjE5NzMgNDUuNjUzNDYxNDU2Mjk4ODMgMTQuODUyODkwMDE0NjQ4NDQgQyA0Ni44Nzg3MzA3NzM5MjU3OCAxNy43NDk3NjkyMTA4MTU0MyA0Ny41IDIwLjgyNzI5OTExODA0MTk5IDQ3LjUgMjQgQyA0Ny41IDI3LjE3MjcwMDg4MTk1ODAxIDQ2Ljg3ODczMDc3MzkyNTc4IDMwLjI1MDIzMDc4OTE4NDU3IDQ1LjY1MzQ2MTQ1NjI5ODgzIDMzLjE0NzEwOTk4NTM1MTU2IEMgNDQuNDY5ODc5MTUwMzkwNjIgMzUuOTQ1NDExNjgyMTI4OTEgNDIuNzc1MzcxNTUxNTEzNjcgMzguNDU4NjQ4NjgxNjQwNjIgNDAuNjE3MDA4MjA5MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyAzOC40NTg2NDg2ODE2NDA2MiA0Mi43NzUzNzE1NTE1MTM2NyAzNS45NDU0MTE2ODIxMjg5MSA0NC40Njk4NzkxNTAzOTA2MiAzMy4xNDcxMDk5ODUzNTE1NiA0NS42NTM0NjE0NTYyOTg4MyBDIDMwLjI1MDIzMDc4OTE4NDU3IDQ2Ljg3ODczMDc3MzkyNTc4IDI3LjE3MjcwMDg4MTk1ODAxIDQ3LjUgMjQgNDcuNSBaIiBzdHJva2U9Im5vbmUiLz48cGF0aCBkPSJNIDI0IDEgQyAyMC44OTQ1ODA4NDEwNjQ0NSAxIDE3Ljg4MjU3OTgwMzQ2NjggMS42MDc5Nzg4MjA4MDA3ODEgMTUuMDQ3NjY4NDU3MDMxMjUgMi44MDcwNDExNjgyMTI4OTEgQyAxMi4zMDg5NzE0MDUwMjkzIDMuOTY1NDE5NzY5Mjg3MTA5IDkuODQ5MTUxNjExMzI4MTI1IDUuNjIzOTM5NTE0MTYwMTU2IDcuNzM2NTQ5Mzc3NDQxNDA2IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgNS42MjM5Mzk1MTQxNjAxNTYgOS44NDkxNTE2MTEzMjgxMjUgMy45NjU0MTk3NjkyODcxMDkgMTIuMzA4OTcxNDA1MDI5MyAyLjgwNzA0MTE2ODIxMjg5MSAxNS4wNDc2Njg0NTcwMzEyNSBDIDEuNjA3OTc4ODIwODAwNzgxIDE3Ljg4MjU3OTgwMzQ2NjggMSAyMC44OTQ1ODA4NDEwNjQ0NSAxIDI0IEMgMSAyNy4xMDU0MTkxNTg5MzU1NSAxLjYwNzk3ODgyMDgwMDc4MSAzMC4xMTc0MjAxOTY1MzMyIDIuODA3MDQxMTY4MjEyODkxIDMyLjk1MjMzMTU0Mjk2ODc1IEMgMy45NjU0MTk3NjkyODcxMDkgMzUuNjkxMDI4NTk0OTcwNyA1LjYyMzkzOTUxNDE2MDE1NiAzOC4xNTA4NDgzODg2NzE4OCA3LjczNjU0OTM3NzQ0MTQwNiA0MC4yNjM0NTA2MjI1NTg1OSBDIDkuODQ5MTUxNjExMzI4MTI1IDQyLjM3NjA2MDQ4NTgzOTg0IDEyLjMwODk3MTQwNTAyOTMgNDQuMDM0NTgwMjMwNzEyODkgMTUuMDQ3NjY4NDU3MDMxMjUgNDUuMTkyOTU4ODMxNzg3MTEgQyAxNy44ODI1Nzk4MDM0NjY4IDQ2LjM5MjAyMTE3OTE5OTIyIDIwLjg5NDU4MDg0MTA2NDQ1IDQ3IDI0IDQ3IEMgMjcuMTA1NDE5MTU4OTM1NTUgNDcgMzAuMTE3NDIwMTk2NTMzMiA0Ni4zOTIwMjExNzkxOTkyMiAzMi45NTIzMzE1NDI5Njg3NSA0NS4xOTI5NTg4MzE3ODcxMSBDIDM1LjY5MTAyODU5NDk3MDcgNDQuMDM0NTgwMjMwNzEyODkgMzguMTUwODQ4Mzg4NjcxODggNDIuMzc2MDYwNDg1ODM5ODQgNDAuMjYzNDUwNjIyNTU4NTkgNDAuMjYzNDUwNjIyNTU4NTkgQyA0Mi4zNzYwNjA0ODU4Mzk4NCAzOC4xNTA4NDgzODg2NzE4OCA0NC4wMzQ1ODAyMzA3MTI4OSAzNS42OTEwMjg1OTQ5NzA3IDQ1LjE5Mjk1ODgzMTc4NzExIDMyLjk1MjMzMTU0Mjk2ODc1IEMgNDYuMzkyMDIxMTc5MTk5MjIgMzAuMTE3NDIwMTk2NTMzMiA0NyAyNy4xMDU0MTkxNTg5MzU1NSA0NyAyNCBDIDQ3IDIwLjg5NDU4MDg0MTA2NDQ1IDQ2LjM5MjAyMTE3OTE5OTIyIDE3Ljg4MjU3OTgwMzQ2NjggNDUuMTkyOTU4ODMxNzg3MTEgMTUuMDQ3NjY4NDU3MDMxMjUgQyA0NC4wMzQ1ODAyMzA3MTI4OSAxMi4zMDg5NzE0MDUwMjkzIDQyLjM3NjA2MDQ4NTgzOTg0IDkuODQ5MTUxNjExMzI4MTI1IDQwLjI2MzQ1MDYyMjU1ODU5IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgMzguMTUwODQ4Mzg4NjcxODggNS42MjM5Mzk1MTQxNjAxNTYgMzUuNjkxMDI4NTk0OTcwNyAzLjk2NTQxOTc2OTI4NzEwOSAzMi45NTIzMzE1NDI5Njg3NSAyLjgwNzA0MTE2ODIxMjg5MSBDIDMwLjExNzQyMDE5NjUzMzIgMS42MDc5Nzg4MjA4MDA3ODEgMjcuMTA1NDE5MTU4OTM1NTUgMSAyNCAxIE0gMjQgMCBDIDM3LjI1NDgyOTQwNjczODI4IDAgNDggMTAuNzQ1MTcwNTkzMjYxNzIgNDggMjQgQyA0OCAzNy4yNTQ4Mjk0MDY3MzgyOCAzNy4yNTQ4Mjk0MDY3MzgyOCA0OCAyNCA0OCBDIDEwLjc0NTE3MDU5MzI2MTcyIDQ4IDAgMzcuMjU0ODI5NDA2NzM4MjggMCAyNCBDIDAgMTAuNzQ1MTcwNTkzMjYxNzIgMTAuNzQ1MTcwNTkzMjYxNzIgMCAyNCAwIFoiIHN0cm9rZT0ibm9uZSIgZmlsbD0iIzAwMCIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MzIgMTQ3MSkiPjxwYXRoIGQ9Ik0wLDBINDhWNDhIMFoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNCwxNi40MTRWMTEuOTQzQTQuNDcxLDQuNDcxLDAsMCwxLDguNDcxLDcuNDcxSDI3Ljg0N00yMy4zNzYsM2w0LjQ3MSw0LjQ3MS00LjQ3MSw0LjQ3MSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOC4wNzYgNy41ODYpIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MTk4Y2MiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48cGF0aCBkPSJNMjcuODQ3LDEydjQuNDcxYTQuNDcxLDQuNDcxLDAsMCwxLTQuNDcxLDQuNDcxSDRtNC40NzEsNC40NzFMNCwyMC45NDNsNC40NzEtNC40NzEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDguMDc2IDEyKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjE5OGNjIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9nPjwvZz48L3N2Zz4=");
+    }
+
+    .iterations-slider::-moz-range-thumb {
+      appearance: none;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMyIC0xNDcxKSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTMyIDE0NzEpIiBmaWxsPSIjZmZmIj48cGF0aCBkPSJNIDI0IDQ3LjUgQyAyMC44MjcyOTkxMTgwNDE5OSA0Ny41IDE3Ljc0OTc2OTIxMDgxNTQzIDQ2Ljg3ODczMDc3MzkyNTc4IDE0Ljg1Mjg5MDAxNDY0ODQ0IDQ1LjY1MzQ2MTQ1NjI5ODgzIEMgMTIuMDU0NTkwMjI1MjE5NzMgNDQuNDY5ODc5MTUwMzkwNjIgOS41NDEzNTAzNjQ2ODUwNTkgNDIuNzc1MzcxNTUxNTEzNjcgNy4zODI5ODk4ODM0MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyA1LjIyNDYyOTg3ODk5NzgwMyAzOC40NTg2NDg2ODE2NDA2MiAzLjUzMDExOTg5NTkzNTA1OSAzNS45NDU0MTE2ODIxMjg5MSAyLjM0NjUzOTk3NDIxMjY0NiAzMy4xNDcxMDk5ODUzNTE1NiBDIDEuMTIxMjY5OTQxMzI5OTU2IDMwLjI1MDIzMDc4OTE4NDU3IDAuNSAyNy4xNzI3MDA4ODE5NTgwMSAwLjUgMjQgQyAwLjUgMjAuODI3Mjk5MTE4MDQxOTkgMS4xMjEyNjk5NDEzMjk5NTYgMTcuNzQ5NzY5MjEwODE1NDMgMi4zNDY1Mzk5NzQyMTI2NDYgMTQuODUyODkwMDE0NjQ4NDQgQyAzLjUzMDExOTg5NTkzNTA1OSAxMi4wNTQ1OTAyMjUyMTk3MyA1LjIyNDYyOTg3ODk5NzgwMyA5LjU0MTM1MDM2NDY4NTA1OSA3LjM4Mjk4OTg4MzQyMjg1MiA3LjM4Mjk4OTg4MzQyMjg1MiBDIDkuNTQxMzUwMzY0Njg1MDU5IDUuMjI0NjI5ODc4OTk3ODAzIDEyLjA1NDU5MDIyNTIxOTczIDMuNTMwMTE5ODk1OTM1MDU5IDE0Ljg1Mjg5MDAxNDY0ODQ0IDIuMzQ2NTM5OTc0MjEyNjQ2IEMgMTcuNzQ5NzY5MjEwODE1NDMgMS4xMjEyNjk5NDEzMjk5NTYgMjAuODI3Mjk5MTE4MDQxOTkgMC41IDI0IDAuNSBDIDI3LjE3MjcwMDg4MTk1ODAxIDAuNSAzMC4yNTAyMzA3ODkxODQ1NyAxLjEyMTI2OTk0MTMyOTk1NiAzMy4xNDcxMDk5ODUzNTE1NiAyLjM0NjUzOTk3NDIxMjY0NiBDIDM1Ljk0NTQxMTY4MjEyODkxIDMuNTMwMTE5ODk1OTM1MDU5IDM4LjQ1ODY0ODY4MTY0MDYyIDUuMjI0NjI5ODc4OTk3ODAzIDQwLjYxNzAwODIwOTIyODUyIDcuMzgyOTg5ODgzNDIyODUyIEMgNDIuNzc1MzcxNTUxNTEzNjcgOS41NDEzNTAzNjQ2ODUwNTkgNDQuNDY5ODc5MTUwMzkwNjIgMTIuMDU0NTkwMjI1MjE5NzMgNDUuNjUzNDYxNDU2Mjk4ODMgMTQuODUyODkwMDE0NjQ4NDQgQyA0Ni44Nzg3MzA3NzM5MjU3OCAxNy43NDk3NjkyMTA4MTU0MyA0Ny41IDIwLjgyNzI5OTExODA0MTk5IDQ3LjUgMjQgQyA0Ny41IDI3LjE3MjcwMDg4MTk1ODAxIDQ2Ljg3ODczMDc3MzkyNTc4IDMwLjI1MDIzMDc4OTE4NDU3IDQ1LjY1MzQ2MTQ1NjI5ODgzIDMzLjE0NzEwOTk4NTM1MTU2IEMgNDQuNDY5ODc5MTUwMzkwNjIgMzUuOTQ1NDExNjgyMTI4OTEgNDIuNzc1MzcxNTUxNTEzNjcgMzguNDU4NjQ4NjgxNjQwNjIgNDAuNjE3MDA4MjA5MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyAzOC40NTg2NDg2ODE2NDA2MiA0Mi43NzUzNzE1NTE1MTM2NyAzNS45NDU0MTE2ODIxMjg5MSA0NC40Njk4NzkxNTAzOTA2MiAzMy4xNDcxMDk5ODUzNTE1NiA0NS42NTM0NjE0NTYyOTg4MyBDIDMwLjI1MDIzMDc4OTE4NDU3IDQ2Ljg3ODczMDc3MzkyNTc4IDI3LjE3MjcwMDg4MTk1ODAxIDQ3LjUgMjQgNDcuNSBaIiBzdHJva2U9Im5vbmUiLz48cGF0aCBkPSJNIDI0IDEgQyAyMC44OTQ1ODA4NDEwNjQ0NSAxIDE3Ljg4MjU3OTgwMzQ2NjggMS42MDc5Nzg4MjA4MDA3ODEgMTUuMDQ3NjY4NDU3MDMxMjUgMi44MDcwNDExNjgyMTI4OTEgQyAxMi4zMDg5NzE0MDUwMjkzIDMuOTY1NDE5NzY5Mjg3MTA5IDkuODQ5MTUxNjExMzI4MTI1IDUuNjIzOTM5NTE0MTYwMTU2IDcuNzM2NTQ5Mzc3NDQxNDA2IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgNS42MjM5Mzk1MTQxNjAxNTYgOS44NDkxNTE2MTEzMjgxMjUgMy45NjU0MTk3NjkyODcxMDkgMTIuMzA4OTcxNDA1MDI5MyAyLjgwNzA0MTE2ODIxMjg5MSAxNS4wNDc2Njg0NTcwMzEyNSBDIDEuNjA3OTc4ODIwODAwNzgxIDE3Ljg4MjU3OTgwMzQ2NjggMSAyMC44OTQ1ODA4NDEwNjQ0NSAxIDI0IEMgMSAyNy4xMDU0MTkxNTg5MzU1NSAxLjYwNzk3ODgyMDgwMDc4MSAzMC4xMTc0MjAxOTY1MzMyIDIuODA3MDQxMTY4MjEyODkxIDMyLjk1MjMzMTU0Mjk2ODc1IEMgMy45NjU0MTk3NjkyODcxMDkgMzUuNjkxMDI4NTk0OTcwNyA1LjYyMzkzOTUxNDE2MDE1NiAzOC4xNTA4NDgzODg2NzE4OCA3LjczNjU0OTM3NzQ0MTQwNiA0MC4yNjM0NTA2MjI1NTg1OSBDIDkuODQ5MTUxNjExMzI4MTI1IDQyLjM3NjA2MDQ4NTgzOTg0IDEyLjMwODk3MTQwNTAyOTMgNDQuMDM0NTgwMjMwNzEyODkgMTUuMDQ3NjY4NDU3MDMxMjUgNDUuMTkyOTU4ODMxNzg3MTEgQyAxNy44ODI1Nzk4MDM0NjY4IDQ2LjM5MjAyMTE3OTE5OTIyIDIwLjg5NDU4MDg0MTA2NDQ1IDQ3IDI0IDQ3IEMgMjcuMTA1NDE5MTU4OTM1NTUgNDcgMzAuMTE3NDIwMTk2NTMzMiA0Ni4zOTIwMjExNzkxOTkyMiAzMi45NTIzMzE1NDI5Njg3NSA0NS4xOTI5NTg4MzE3ODcxMSBDIDM1LjY5MTAyODU5NDk3MDcgNDQuMDM0NTgwMjMwNzEyODkgMzguMTUwODQ4Mzg4NjcxODggNDIuMzc2MDYwNDg1ODM5ODQgNDAuMjYzNDUwNjIyNTU4NTkgNDAuMjYzNDUwNjIyNTU4NTkgQyA0Mi4zNzYwNjA0ODU4Mzk4NCAzOC4xNTA4NDgzODg2NzE4OCA0NC4wMzQ1ODAyMzA3MTI4OSAzNS42OTEwMjg1OTQ5NzA3IDQ1LjE5Mjk1ODgzMTc4NzExIDMyLjk1MjMzMTU0Mjk2ODc1IEMgNDYuMzkyMDIxMTc5MTk5MjIgMzAuMTE3NDIwMTk2NTMzMiA0NyAyNy4xMDU0MTkxNTg5MzU1NSA0NyAyNCBDIDQ3IDIwLjg5NDU4MDg0MTA2NDQ1IDQ2LjM5MjAyMTE3OTE5OTIyIDE3Ljg4MjU3OTgwMzQ2NjggNDUuMTkyOTU4ODMxNzg3MTEgMTUuMDQ3NjY4NDU3MDMxMjUgQyA0NC4wMzQ1ODAyMzA3MTI4OSAxMi4zMDg5NzE0MDUwMjkzIDQyLjM3NjA2MDQ4NTgzOTg0IDkuODQ5MTUxNjExMzI4MTI1IDQwLjI2MzQ1MDYyMjU1ODU5IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgMzguMTUwODQ4Mzg4NjcxODggNS42MjM5Mzk1MTQxNjAxNTYgMzUuNjkxMDI4NTk0OTcwNyAzLjk2NTQxOTc2OTI4NzEwOSAzMi45NTIzMzE1NDI5Njg3NSAyLjgwNzA0MTE2ODIxMjg5MSBDIDMwLjExNzQyMDE5NjUzMzIgMS42MDc5Nzg4MjA4MDA3ODEgMjcuMTA1NDE5MTU4OTM1NTUgMSAyNCAxIE0gMjQgMCBDIDM3LjI1NDgyOTQwNjczODI4IDAgNDggMTAuNzQ1MTcwNTkzMjYxNzIgNDggMjQgQyA0OCAzNy4yNTQ4Mjk0MDY3MzgyOCAzNy4yNTQ4Mjk0MDY3MzgyOCA0OCAyNCA0OCBDIDEwLjc0NTE3MDU5MzI2MTcyIDQ4IDAgMzcuMjU0ODI5NDA2NzM4MjggMCAyNCBDIDAgMTAuNzQ1MTcwNTkzMjYxNzIgMTAuNzQ1MTcwNTkzMjYxNzIgMCAyNCAwIFoiIHN0cm9rZT0ibm9uZSIgZmlsbD0iIzAwMCIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MzIgMTQ3MSkiPjxwYXRoIGQ9Ik0wLDBINDhWNDhIMFoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNCwxNi40MTRWMTEuOTQzQTQuNDcxLDQuNDcxLDAsMCwxLDguNDcxLDcuNDcxSDI3Ljg0N00yMy4zNzYsM2w0LjQ3MSw0LjQ3MS00LjQ3MSw0LjQ3MSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOC4wNzYgNy41ODYpIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MTk4Y2MiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48cGF0aCBkPSJNMjcuODQ3LDEydjQuNDcxYTQuNDcxLDQuNDcxLDAsMCwxLTQuNDcxLDQuNDcxSDRtNC40NzEsNC40NzFMNCwyMC45NDNsNC40NzEtNC40NzEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDguMDc2IDEyKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjE5OGNjIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9nPjwvZz48L3N2Zz4=");
+      background-color: transparent;
+      border: none;
+    }
+
+    .iterations-slider::-ms-thumb {
+      appearance: none;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtOTMyIC0xNDcxKSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOTMyIDE0NzEpIiBmaWxsPSIjZmZmIj48cGF0aCBkPSJNIDI0IDQ3LjUgQyAyMC44MjcyOTkxMTgwNDE5OSA0Ny41IDE3Ljc0OTc2OTIxMDgxNTQzIDQ2Ljg3ODczMDc3MzkyNTc4IDE0Ljg1Mjg5MDAxNDY0ODQ0IDQ1LjY1MzQ2MTQ1NjI5ODgzIEMgMTIuMDU0NTkwMjI1MjE5NzMgNDQuNDY5ODc5MTUwMzkwNjIgOS41NDEzNTAzNjQ2ODUwNTkgNDIuNzc1MzcxNTUxNTEzNjcgNy4zODI5ODk4ODM0MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyA1LjIyNDYyOTg3ODk5NzgwMyAzOC40NTg2NDg2ODE2NDA2MiAzLjUzMDExOTg5NTkzNTA1OSAzNS45NDU0MTE2ODIxMjg5MSAyLjM0NjUzOTk3NDIxMjY0NiAzMy4xNDcxMDk5ODUzNTE1NiBDIDEuMTIxMjY5OTQxMzI5OTU2IDMwLjI1MDIzMDc4OTE4NDU3IDAuNSAyNy4xNzI3MDA4ODE5NTgwMSAwLjUgMjQgQyAwLjUgMjAuODI3Mjk5MTE4MDQxOTkgMS4xMjEyNjk5NDEzMjk5NTYgMTcuNzQ5NzY5MjEwODE1NDMgMi4zNDY1Mzk5NzQyMTI2NDYgMTQuODUyODkwMDE0NjQ4NDQgQyAzLjUzMDExOTg5NTkzNTA1OSAxMi4wNTQ1OTAyMjUyMTk3MyA1LjIyNDYyOTg3ODk5NzgwMyA5LjU0MTM1MDM2NDY4NTA1OSA3LjM4Mjk4OTg4MzQyMjg1MiA3LjM4Mjk4OTg4MzQyMjg1MiBDIDkuNTQxMzUwMzY0Njg1MDU5IDUuMjI0NjI5ODc4OTk3ODAzIDEyLjA1NDU5MDIyNTIxOTczIDMuNTMwMTE5ODk1OTM1MDU5IDE0Ljg1Mjg5MDAxNDY0ODQ0IDIuMzQ2NTM5OTc0MjEyNjQ2IEMgMTcuNzQ5NzY5MjEwODE1NDMgMS4xMjEyNjk5NDEzMjk5NTYgMjAuODI3Mjk5MTE4MDQxOTkgMC41IDI0IDAuNSBDIDI3LjE3MjcwMDg4MTk1ODAxIDAuNSAzMC4yNTAyMzA3ODkxODQ1NyAxLjEyMTI2OTk0MTMyOTk1NiAzMy4xNDcxMDk5ODUzNTE1NiAyLjM0NjUzOTk3NDIxMjY0NiBDIDM1Ljk0NTQxMTY4MjEyODkxIDMuNTMwMTE5ODk1OTM1MDU5IDM4LjQ1ODY0ODY4MTY0MDYyIDUuMjI0NjI5ODc4OTk3ODAzIDQwLjYxNzAwODIwOTIyODUyIDcuMzgyOTg5ODgzNDIyODUyIEMgNDIuNzc1MzcxNTUxNTEzNjcgOS41NDEzNTAzNjQ2ODUwNTkgNDQuNDY5ODc5MTUwMzkwNjIgMTIuMDU0NTkwMjI1MjE5NzMgNDUuNjUzNDYxNDU2Mjk4ODMgMTQuODUyODkwMDE0NjQ4NDQgQyA0Ni44Nzg3MzA3NzM5MjU3OCAxNy43NDk3NjkyMTA4MTU0MyA0Ny41IDIwLjgyNzI5OTExODA0MTk5IDQ3LjUgMjQgQyA0Ny41IDI3LjE3MjcwMDg4MTk1ODAxIDQ2Ljg3ODczMDc3MzkyNTc4IDMwLjI1MDIzMDc4OTE4NDU3IDQ1LjY1MzQ2MTQ1NjI5ODgzIDMzLjE0NzEwOTk4NTM1MTU2IEMgNDQuNDY5ODc5MTUwMzkwNjIgMzUuOTQ1NDExNjgyMTI4OTEgNDIuNzc1MzcxNTUxNTEzNjcgMzguNDU4NjQ4NjgxNjQwNjIgNDAuNjE3MDA4MjA5MjI4NTIgNDAuNjE3MDA4MjA5MjI4NTIgQyAzOC40NTg2NDg2ODE2NDA2MiA0Mi43NzUzNzE1NTE1MTM2NyAzNS45NDU0MTE2ODIxMjg5MSA0NC40Njk4NzkxNTAzOTA2MiAzMy4xNDcxMDk5ODUzNTE1NiA0NS42NTM0NjE0NTYyOTg4MyBDIDMwLjI1MDIzMDc4OTE4NDU3IDQ2Ljg3ODczMDc3MzkyNTc4IDI3LjE3MjcwMDg4MTk1ODAxIDQ3LjUgMjQgNDcuNSBaIiBzdHJva2U9Im5vbmUiLz48cGF0aCBkPSJNIDI0IDEgQyAyMC44OTQ1ODA4NDEwNjQ0NSAxIDE3Ljg4MjU3OTgwMzQ2NjggMS42MDc5Nzg4MjA4MDA3ODEgMTUuMDQ3NjY4NDU3MDMxMjUgMi44MDcwNDExNjgyMTI4OTEgQyAxMi4zMDg5NzE0MDUwMjkzIDMuOTY1NDE5NzY5Mjg3MTA5IDkuODQ5MTUxNjExMzI4MTI1IDUuNjIzOTM5NTE0MTYwMTU2IDcuNzM2NTQ5Mzc3NDQxNDA2IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgNS42MjM5Mzk1MTQxNjAxNTYgOS44NDkxNTE2MTEzMjgxMjUgMy45NjU0MTk3NjkyODcxMDkgMTIuMzA4OTcxNDA1MDI5MyAyLjgwNzA0MTE2ODIxMjg5MSAxNS4wNDc2Njg0NTcwMzEyNSBDIDEuNjA3OTc4ODIwODAwNzgxIDE3Ljg4MjU3OTgwMzQ2NjggMSAyMC44OTQ1ODA4NDEwNjQ0NSAxIDI0IEMgMSAyNy4xMDU0MTkxNTg5MzU1NSAxLjYwNzk3ODgyMDgwMDc4MSAzMC4xMTc0MjAxOTY1MzMyIDIuODA3MDQxMTY4MjEyODkxIDMyLjk1MjMzMTU0Mjk2ODc1IEMgMy45NjU0MTk3NjkyODcxMDkgMzUuNjkxMDI4NTk0OTcwNyA1LjYyMzkzOTUxNDE2MDE1NiAzOC4xNTA4NDgzODg2NzE4OCA3LjczNjU0OTM3NzQ0MTQwNiA0MC4yNjM0NTA2MjI1NTg1OSBDIDkuODQ5MTUxNjExMzI4MTI1IDQyLjM3NjA2MDQ4NTgzOTg0IDEyLjMwODk3MTQwNTAyOTMgNDQuMDM0NTgwMjMwNzEyODkgMTUuMDQ3NjY4NDU3MDMxMjUgNDUuMTkyOTU4ODMxNzg3MTEgQyAxNy44ODI1Nzk4MDM0NjY4IDQ2LjM5MjAyMTE3OTE5OTIyIDIwLjg5NDU4MDg0MTA2NDQ1IDQ3IDI0IDQ3IEMgMjcuMTA1NDE5MTU4OTM1NTUgNDcgMzAuMTE3NDIwMTk2NTMzMiA0Ni4zOTIwMjExNzkxOTkyMiAzMi45NTIzMzE1NDI5Njg3NSA0NS4xOTI5NTg4MzE3ODcxMSBDIDM1LjY5MTAyODU5NDk3MDcgNDQuMDM0NTgwMjMwNzEyODkgMzguMTUwODQ4Mzg4NjcxODggNDIuMzc2MDYwNDg1ODM5ODQgNDAuMjYzNDUwNjIyNTU4NTkgNDAuMjYzNDUwNjIyNTU4NTkgQyA0Mi4zNzYwNjA0ODU4Mzk4NCAzOC4xNTA4NDgzODg2NzE4OCA0NC4wMzQ1ODAyMzA3MTI4OSAzNS42OTEwMjg1OTQ5NzA3IDQ1LjE5Mjk1ODgzMTc4NzExIDMyLjk1MjMzMTU0Mjk2ODc1IEMgNDYuMzkyMDIxMTc5MTk5MjIgMzAuMTE3NDIwMTk2NTMzMiA0NyAyNy4xMDU0MTkxNTg5MzU1NSA0NyAyNCBDIDQ3IDIwLjg5NDU4MDg0MTA2NDQ1IDQ2LjM5MjAyMTE3OTE5OTIyIDE3Ljg4MjU3OTgwMzQ2NjggNDUuMTkyOTU4ODMxNzg3MTEgMTUuMDQ3NjY4NDU3MDMxMjUgQyA0NC4wMzQ1ODAyMzA3MTI4OSAxMi4zMDg5NzE0MDUwMjkzIDQyLjM3NjA2MDQ4NTgzOTg0IDkuODQ5MTUxNjExMzI4MTI1IDQwLjI2MzQ1MDYyMjU1ODU5IDcuNzM2NTQ5Mzc3NDQxNDA2IEMgMzguMTUwODQ4Mzg4NjcxODggNS42MjM5Mzk1MTQxNjAxNTYgMzUuNjkxMDI4NTk0OTcwNyAzLjk2NTQxOTc2OTI4NzEwOSAzMi45NTIzMzE1NDI5Njg3NSAyLjgwNzA0MTE2ODIxMjg5MSBDIDMwLjExNzQyMDE5NjUzMzIgMS42MDc5Nzg4MjA4MDA3ODEgMjcuMTA1NDE5MTU4OTM1NTUgMSAyNCAxIE0gMjQgMCBDIDM3LjI1NDgyOTQwNjczODI4IDAgNDggMTAuNzQ1MTcwNTkzMjYxNzIgNDggMjQgQyA0OCAzNy4yNTQ4Mjk0MDY3MzgyOCAzNy4yNTQ4Mjk0MDY3MzgyOCA0OCAyNCA0OCBDIDEwLjc0NTE3MDU5MzI2MTcyIDQ4IDAgMzcuMjU0ODI5NDA2NzM4MjggMCAyNCBDIDAgMTAuNzQ1MTcwNTkzMjYxNzIgMTAuNzQ1MTcwNTkzMjYxNzIgMCAyNCAwIFoiIHN0cm9rZT0ibm9uZSIgZmlsbD0iIzAwMCIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg5MzIgMTQ3MSkiPjxwYXRoIGQ9Ik0wLDBINDhWNDhIMFoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNCwxNi40MTRWMTEuOTQzQTQuNDcxLDQuNDcxLDAsMCwxLDguNDcxLDcuNDcxSDI3Ljg0N00yMy4zNzYsM2w0LjQ3MSw0LjQ3MS00LjQ3MSw0LjQ3MSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOC4wNzYgNy41ODYpIiBmaWxsPSJub25lIiBzdHJva2U9IiM2MTk4Y2MiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiLz48cGF0aCBkPSJNMjcuODQ3LDEydjQuNDcxYTQuNDcxLDQuNDcxLDAsMCwxLTQuNDcxLDQuNDcxSDRtNC40NzEsNC40NzFMNCwyMC45NDNsNC40NzEtNC40NzEiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDguMDc2IDEyKSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjE5OGNjIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ii8+PC9nPjwvZz48L3N2Zz4=");
+    }
+
+    .slider-wraper label {
+      flex: 0 1 auto;
+    }
+
+    #activation-select {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1rem;
+    }
+
+    .btn {
+      padding: 1em;
+      text-align: center;
+      display: block;
+      width: 100%;
+      border: 2px solid #3d85c6;
+      background-color: #cfe2f3ff;
+      color: #000;
+      text-decoration: none;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .btn:hover {
+      background-color: #3d85c6;
+      color: #fff;
+    }
+
+    .reset-btn {
+      display: none;
+    }
+
+    .calculations {
+      margin: 1em 0;
+    }
+
+    /**
+Initial SVG elements hiding
+*/
+    #attributes-arrow,
+    #calculations-arrow,
+    #training-data-loop,
+    #training-data-loop-label,
+    #iterations-loop-path,
+    #iterations-loop-arrow,
+    #iterations-loop-label,
+    #training-in-progress-label,
+    #precision-label {
+      opacity: 0;
+    }
+
+    #activation-echelon {
+      opacity: 1;
+    }
+
+    .activations {
+      opacity: 0.25;
+      transition: opacity 0.25s ease-in;
+    }
+
+    .calculations-container {
+      display: none;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .container {
+        display: flex;
+        flex-direction: column-reverse;
+      }
+
+      .simulateur {
+        margin: 2em 0.5em 0.5em;
+      }
+
+      .controls {
+        margin: 0.5em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="container">
+    <div class="simulateur">
+      <header id="page-title">
+        <h1 id="title">
+          Simulation d'un perceptron
+        </h1>
+      </header>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+
+        <g transform="matrix(0.899, 0.438, -0.438, 0.899, 435.787, 0)" id="training-data-loop">
+          <path d="M0,0H335.184V335.184H0Z" fill="none" />
+          <path d="M0,97.207a111.728,111.728,0,1,1,6.983,55.864M0,222.9v-69.83H69.83"
+            transform="translate(56.562 56.419)" fill="none" stroke="#cfe2f3" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="10" />
+        </g>
+        <path
+          d="M165.927,0H648.221C862.827,28.552,825.256,149.033,825.256,332.875S855.438,665.75,671.6,665.75H165.927C-17.915,665.75-.06,516.717-.06,332.875S-17.915,0,165.927,0Z"
+          transform="translate(719.896 232.917)" fill="#fff" />
+        <path id="calculations-arrow-path"
+          d="M622.289,348.412l764.347-2.673s214.693-10.228,214.693,169.221v373.3s8.887,126.135-177.913,114.135H622.289s-100.059-.285-100.059-115.464"
+          transform="translate(-56.611 -115.701)" fill="none" stroke="#6198cc" stroke-width="10" />
+        <path id="calculations-arrow" d="M14.627,0,29.254,24.822H0Z" transform="translate(589.522 217.846) rotate(90)"
+          fill="#6198cc" />
+        <path d="M14.627,0,29.254,24.822H0Z" transform="translate(450.991 760.818)" fill="#6198cc" />
+        <g transform="translate(345.358 158.452)">
+          <path
+            d="M384.57,276.619s109.094-28.208,207.471,0c.219,17.939,0,120.431,0,120.431s-99.731,34.661-207.471,0C384.591,381.315,384.57,276.619,384.57,276.619Z"
+            transform="translate(-384.57 -264.009)" fill="#cfe2f3" stroke="#000" stroke-width="2" />
+          <path d="M384.57,310.678S456.327,289.068,533.9,298a258.523,258.523,0,0,1,56.352,12.679"
+            transform="translate(-383.683 -267.614)" fill="none" stroke="#000" stroke-width="2" />
+          <path d="M384.57,310.678S456.327,289.068,533.9,298a258.523,258.523,0,0,1,56.352,12.679"
+            transform="translate(-383.683 -236.418)" fill="none" stroke="#000" stroke-width="2" />
+          <path d="M384.57,310.678S456.327,289.068,533.9,298a258.523,258.523,0,0,1,56.352,12.679"
+            transform="translate(-383.683 -178.628)" fill="none" stroke="#000" stroke-width="2" />
+          <path d="M384.57,310.678S456.327,289.068,533.9,298a258.523,258.523,0,0,1,56.352,12.679"
+            transform="translate(-383.683 -205.223)" fill="none" stroke="#000" stroke-width="2" />
+
+          <g fill="none" stroke="#6198cc" stroke-width="5">
+            <rect width="31" height="138" stroke="none" />
+            <rect x="115" y="-7" width="26" height="133" fill="none" />
+          </g>
+
+          <text class="training-data-matrix" transform="translate(69.746 21.211)" font-size="23"
+            font-family="ArialMT, Arial">
+            <tspan x="0" y="0">0, 0, 0</tspan>
+          </text><text class="training-data-matrix" transform="translate(69.746 53.211)" font-size="23"
+            font-family="ArialMT, Arial">
+            <tspan x="0" y="0">0, 1, 0</tspan>
+          </text><text class="training-data-matrix" transform="translate(69.746 83.211)" font-size="23"
+            font-family="ArialMT, Arial">
+            <tspan x="0" y="0">1, 0, 0</tspan>
+          </text><text class="training-data-matrix" transform="translate(69.746 113.211)" font-size="23"
+            font-family="ArialMT, Arial">
+            <tspan x="0" y="0">1, 1, 1</tspan>
+          </text>
+        </g>
+        <g transform="translate(1464.55 478.473)">
+          <g transform="translate(80.235 0) rotate(45)" fill="#cfe2f3" stroke="#6198cc" stroke-width="10">
+            <rect width="113.47" height="113.47" stroke="none" />
+            <rect x="5" y="5" width="103.47" height="103.47" fill="none" />
+          </g><text id="precision-label" transform="translate(55.554 92.19)" font-size="28"
+            font-family="Arial-BoldMT, Arial" font-weight="700">
+            <tspan x="0" y="0">0.0</tspan>
+          </text>
+        </g>
+        <g transform="translate(178.896 217.846)">
+          <path id="attributes-arrow-path"
+            d="M265.381,194.768H166.925s-54.132-.225-54.132,28.929,1.922,389.7,1.922,389.7-1.192,55.456,60.21,55.456"
+            transform="translate(-112.793 -179.903)" fill="none" stroke="#6198cc" stroke-width="10" />
+          <g transform="translate(129.207 28.817) rotate(90)" fill="#6198cc" id="attributes-arrow">
+            <path
+              d="M 28.11374282836914 23.5 L 0.8862566947937012 23.5 L 14.5 0.9669075608253479 L 28.11374282836914 23.5 Z"
+              stroke="none" />
+            <path
+              d="M 14.5 1.933815002441406 L 1.772512435913086 23 L 27.22748565673828 23 L 14.5 1.933815002441406 M 14.5 0 L 29 24 L 0 24 L 14.5 0 Z"
+              stroke="none" fill="#6198cc" />
+          </g>
+          <g transform="translate(76.207 473.817) rotate(90)" fill="#6198cc">
+            <path
+              d="M 29.11689949035645 24.5 L 0.8830987215042114 24.5 L 14.99998950958252 0.971833348274231 L 29.11689949035645 24.5 Z"
+              stroke="none" />
+            <path
+              d="M 14.99998950958252 1.943649291992188 L 1.76618766784668 24 L 28.23380851745605 24 L 14.99998950958252 1.943649291992188 M 14.99998950958252 0 L 30 25 L -1.9073486328125e-06 25 L 14.99998950958252 0 Z"
+              stroke="none" fill="#6198cc" />
+          </g>
+          <g transform="translate(0 326.226)" class="attributes-arrows">
+            <path d="M112.793,400.5h59.487" transform="translate(-112.793 -385.873)" fill="none" stroke="#6198cc"
+              stroke-width="10" />
+            <g transform="translate(76.207 -0.41) rotate(90)" fill="#6198cc">
+              <path
+                d="M 29.11689949035645 24.5 L 0.8830987215042114 24.5 L 14.99998950958252 0.971833348274231 L 29.11689949035645 24.5 Z"
+                stroke="none" />
+              <path
+                d="M 14.99998950958252 1.943649291992188 L 1.76618766784668 24 L 28.23380851745605 24 L 14.99998950958252 1.943649291992188 M 14.99998950958252 0 L 30 25 L -1.9073486328125e-06 25 L 14.99998950958252 0 Z"
+                stroke="none" fill="#6198cc" />
+            </g>
+          </g>
+          <g transform="translate(0 182.616)" class="attributes-arrows">
+            <path d="M112.793,400.5h59.487" transform="translate(-112.793 -385.873)" fill="none" stroke="#6198cc"
+              stroke-width="10" />
+            <g transform="translate(76.207 0.201) rotate(90)" fill="#6198cc">
+              <path
+                d="M 28.13198089599609 24.5 L 0.8680188059806824 24.5 L 14.5 0.9965841174125671 L 28.13198089599609 24.5 Z"
+                stroke="none" />
+              <path
+                d="M 14.5 1.99315071105957 L 1.736026763916016 24 L 27.26397323608398 24 L 14.5 1.99315071105957 M 14.5 0 L 29 25 L 0 25 L 14.5 0 Z"
+                stroke="none" fill="#6198cc" />
+            </g>
+          </g>
+        </g>
+        <g transform="translate(274.82 385.392)">
+          <g transform="translate(0.283 0.271)" fill="#cfe2f3" stroke="#6198cc" stroke-width="5">
+            <rect width="56" height="56" rx="10" stroke="none" />
+            <rect x="2.5" y="2.5" width="51" height="51" rx="7.5" fill="none" />
+          </g><text transform="translate(22.283 35.271)" font-size="22" font-family="ArialMT, Arial">
+            <tspan x="0" y="0">1</tspan>
+          </text>
+        </g>
+        <g transform="translate(274.82 530.341)">
+          <g transform="translate(0)" fill="#cfe2f3" stroke="#6198cc" stroke-width="5">
+            <rect width="56.735" height="56.735" rx="10" stroke="none" />
+            <rect x="2.5" y="2.5" width="51.735" height="51.735" rx="7.5" fill="none" />
+          </g>
+        </g>
+        <g transform="translate(274.82 675.272)">
+          <g transform="translate(0.283 0.391)" fill="#cfe2f3" stroke="#6198cc" stroke-width="5">
+            <rect width="56" height="56" rx="10" stroke="none" />
+            <rect x="2.5" y="2.5" width="51" height="51" rx="7.5" fill="none" />
+          </g>
+        </g>
+        <g transform="translate(386.517 384.505)" class="weight-sliders">
+          <g transform="translate(-0.414 20.158)" fill="#cfe2f3" stroke="#6198cc" stroke-width="1">
+            <rect width="156" height="18" rx="5" stroke="none" />
+            <rect x="0.5" y="0.5" width="155" height="17" rx="4.5" fill="none" class="weight-slider-path" />
+          </g>
+          <g transform="translate(50 0)" class="weight-slider-knob">
+            <g transform="translate(0)" fill="#fff" stroke="#707070" stroke-width="1">
+              <ellipse cx="29.5" cy="29" rx="29.5" ry="29" stroke="none" />
+              <ellipse cx="29.5" cy="29" rx="29" ry="28.5" fill="none" />
+            </g>
+            <g transform="translate(6.205 6.205)">
+              <path d="M0,0H46.1V46.1H0Z" fill="none" />
+              <line y2="35" transform="translate(22.624 5.952)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <line x2="12" transform="translate(17.624 40.952)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <path d="M3,6.921,8.762,8.841,20.286,5,31.811,8.841l5.762-1.921" transform="translate(2.762 4.604)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M8.762,7,3,24.286a9.6,9.6,0,0,0,11.524,0L8.762,7" transform="translate(2.762 6.445)" fill="none"
+                stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M20.762,7,15,24.286a9.6,9.6,0,0,0,11.524,0L20.762,7" transform="translate(13.811 6.445)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+            </g>
+          </g>
+        </g>
+        <g transform="translate(386.517 529.454)" class="weight-sliders">
+          <g transform="translate(0 20.389)" fill="#cfe2f3" stroke="#6198cc" stroke-width="1">
+            <rect width="155.135" height="17.73" rx="5" stroke="none" />
+            <rect x="0.5" y="0.5" width="154.135" height="16.73" rx="4.5" fill="none" class="weight-slider-path" />
+          </g>
+          <g transform="translate(50 0)" class="weight-slider-knob">
+            <g transform="translate(0)" fill="#fff" stroke="#707070" stroke-width="1">
+              <circle cx="29.254" cy="29.254" r="29.254" stroke="none" />
+              <circle cx="29.254" cy="29.254" r="28.754" fill="none" />
+            </g>
+            <g transform="translate(6.205 6.205)">
+              <path d="M0,0H46.1V46.1H0Z" fill="none" />
+              <line y2="34.573" transform="translate(23.049 6.205)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <line x2="11.524" transform="translate(17.73 40.778)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <path d="M3,6.921,8.762,8.841,20.286,5,31.811,8.841l5.762-1.921" transform="translate(2.762 4.604)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M8.762,7,3,24.286a9.6,9.6,0,0,0,11.524,0L8.762,7" transform="translate(2.762 6.445)" fill="none"
+                stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M20.762,7,15,24.286a9.6,9.6,0,0,0,11.524,0L20.762,7" transform="translate(13.811 6.445)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+            </g>
+          </g>
+        </g>
+        <g transform="translate(386.517 674.386)" class="weight-sliders">
+          <g transform="translate(-0.414 20.277)" fill="#cfe2f3" stroke="#6198cc" stroke-width="1">
+            <rect width="156" height="18" rx="5" stroke="none" />
+            <rect x="0.5" y="0.5" width="155" height="17" rx="4.5" fill="none" class="weight-slider-path" />
+          </g>
+          <g transform="translate(50 0)" class="weight-slider-knob">
+            <g transform="translate(0)" fill="#fff" stroke="#707070" stroke-width="1">
+              <ellipse cx="29.5" cy="29" rx="29.5" ry="29" stroke="none" />
+              <ellipse cx="29.5" cy="29" rx="29" ry="28.5" fill="none" />
+            </g>
+            <g transform="translate(6.205 6.205)">
+              <path d="M0,0H46.1V46.1H0Z" fill="none" />
+              <line y2="35" transform="translate(22.624 6.072)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <line x2="12" transform="translate(17.624 41.072)" fill="none" stroke="#6198cc" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="3" />
+              <path d="M3,6.921,8.762,8.841,20.286,5,31.811,8.841l5.762-1.921" transform="translate(2.762 4.604)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M8.762,7,3,24.286a9.6,9.6,0,0,0,11.524,0L8.762,7" transform="translate(2.762 6.445)" fill="none"
+                stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+              <path d="M20.762,7,15,24.286a9.6,9.6,0,0,0,11.524,0L20.762,7" transform="translate(13.811 6.445)"
+                fill="none" stroke="#6198cc" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+            </g>
+          </g>
+        </g>
+        <ellipse cx="229.156" cy="139.621" rx="229.156" ry="139.621" transform="translate(812.473 418.648)" fill="none"
+          stroke="#3d85c6" stroke-miterlimit="10" stroke-width="5" />
+        <path d="M975.5,471.5V749.856" transform="translate(27.124 -52.408)" fill="none" stroke="#3d85c6"
+          stroke-miterlimit="10" stroke-width="5" />
+        <g transform="translate(847.038 495.286)" id="calculations-button">
+          <path d="M862.731,557.451a62.74,62.74,0,1,1-62.74,62.74A62.74,62.74,0,0,1,862.731,557.451Z"
+            transform="translate(-799.991 -557.451)" fill="none" stroke="#3d85c6" stroke-linecap="round"
+            stroke-width="5" />
+          <path d="M847.174,628.226H889" transform="translate(-805.347 -565.485)" fill="none" stroke="#3d85c6"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+          <path d="M870.765,604.634v41.827" transform="translate(-808.025 -562.807)" fill="none" stroke="#3d85c6"
+            stroke-linecap="round" stroke-linejoin="round" stroke-width="5" />
+        </g>
+        <g transform="translate(1131.164 470.189)" id="activation-echelon" data-activation="echelon"
+          class="activations">
+          <line y1="68.259" transform="translate(17.286 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="67.373" transform="translate(7.092 62.815)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="68.259" transform="translate(63.384 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="62.94" transform="translate(9.751 16.718)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(32.357 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 47.745) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="51.416" transform="translate(9.308 15.388)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="55.849" transform="translate(12.411 70.794)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="75.351" transform="translate(55.405 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="74.465" transform="translate(3.546 24.697)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="74.465" transform="translate(24.378 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="75.351" transform="translate(2.659 55.724)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="58.508" transform="translate(70.476 10.956)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="52.303" transform="translate(14.184 9.626)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(47.427 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 32.675) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(40.335 0.318)" fill="none" stroke="#aaa" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 39.767) rotate(-90)" fill="none" stroke="#aaa" stroke-width="1" />
+          <path d="M1137.224,582.218h23.034V559.169H1183.5" transform="translate(-1119.891 -542.451)" fill="none"
+            stroke="#000" stroke-width="1" />
+          <rect width="78.292" height="81.423" rx="39.146" transform="translate(1.33)" fill="none" stroke="#3d85c6"
+            stroke-width="5" />
+        </g>
+        <g transform="translate(1029.401 470.189)" id="activation-sigmoide" data-activation="sigmoide"
+          class="activations">
+          <line y1="68.259" transform="translate(17.286 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="67.373" transform="translate(7.092 62.815)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="68.259" transform="translate(63.384 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="62.94" transform="translate(9.751 16.718)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(32.357 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 47.745) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="51.416" transform="translate(9.308 15.388)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="55.849" transform="translate(12.411 70.794)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="75.351" transform="translate(55.405 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="74.465" transform="translate(3.546 24.697)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="74.465" transform="translate(24.378 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="75.351" transform="translate(2.659 55.724)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="58.508" transform="translate(70.476 10.956)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="52.303" transform="translate(14.184 9.626)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(47.427 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 32.675) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(40.335 0.318)" fill="none" stroke="#aaa" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 39.767) rotate(-90)" fill="none" stroke="#aaa" stroke-width="1" />
+          <rect width="78.292" height="81.423" rx="39.146" transform="translate(1.33)" fill="none" stroke="#3d85c6"
+            stroke-width="5" />
+          <path d="M1270.5,1483.09h15.1c9.609,0,6.092-46.153,15.411-46.153h16.175"
+            transform="translate(-1253.214 -1420.275)" fill="none" stroke="#000" stroke-width="1" />
+        </g>
+        <g transform="translate(1029.401 564.922)" id="activation-tanh" data-activation="tanh" class="activations">
+          <line y1="68.259" transform="translate(17.286 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="67.373" transform="translate(7.092 62.815)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="68.259" transform="translate(63.384 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="62.94" transform="translate(9.751 16.718)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(32.357 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 47.745) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="51.416" transform="translate(9.308 15.388)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="55.849" transform="translate(12.411 70.794)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="75.351" transform="translate(55.405 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="74.465" transform="translate(3.546 24.697)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="74.465" transform="translate(24.378 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="75.351" transform="translate(2.659 55.724)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="58.508" transform="translate(70.476 10.956)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="52.303" transform="translate(14.184 9.626)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(47.427 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 32.675) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(40.335 0.318)" fill="none" stroke="#aaa" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 39.767) rotate(-90)" fill="none" stroke="#aaa" stroke-width="1" />
+          <rect width="78.292" height="81.423" rx="39.146" transform="translate(1.33)" fill="none" stroke="#3d85c6"
+            stroke-width="5" />
+          <path d="M1261.568,1460.084h17c9.609,0,16.3-23.147,25.621-23.147h15.468"
+            transform="translate(-1252.2 -1420.275)" fill="none" stroke="#000" stroke-width="1" />
+        </g>
+        <g transform="translate(1131.164 564.922)" id="activation-relu" data-activation="relu" class="activations">
+          <line y1="68.259" transform="translate(17.286 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="67.373" transform="translate(7.092 62.815)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="68.259" transform="translate(63.384 6.524)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="62.94" transform="translate(9.751 16.718)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(32.357 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 47.745) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="51.416" transform="translate(9.308 15.388)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="55.849" transform="translate(12.411 70.794)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="75.351" transform="translate(55.405 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="74.465" transform="translate(3.546 24.697)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="74.465" transform="translate(24.378 2.978)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="75.351" transform="translate(2.659 55.724)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="58.508" transform="translate(70.476 10.956)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line x1="52.303" transform="translate(14.184 9.626)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(47.427 0.318)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 32.675) rotate(-90)" fill="none" stroke="#d1d1d1" stroke-width="1" />
+          <line y1="79.784" transform="translate(40.335 0.318)" fill="none" stroke="#aaa" stroke-width="1" />
+          <line y1="79.784" transform="translate(0 39.767) rotate(-90)" fill="none" stroke="#aaa" stroke-width="1" />
+          <rect width="78.292" height="81.423" rx="39.146" transform="translate(1.33)" fill="none" stroke="#3d85c6"
+            stroke-width="5" />
+          <path d="M1261.5,1460.044h31.033l23.069-23.087" transform="translate(-1252.192 -1420.277)" fill="none"
+            stroke="#000" stroke-width="1" />
+        </g>
+
+        <g transform="translate(1278.764 543.643)" id="training-out-arrow">
+          <line x2="165.579" transform="translate(0 15.07)" fill="none" stroke="#6198cc" stroke-width="10" />
+          <path d="M14.627,0,29.254,24.822H0Z" transform="translate(185.786) rotate(90)" fill="#6198cc" />
+        </g>
+        <g transform="translate(619.552 398.506) rotate(17)" class="weight-arrows">
+          <line x2="149.705" transform="translate(0 15.07)" fill="none" stroke="#6198cc" stroke-width="10" />
+          <path d="M14.627,0,29.254,29.519H0Z" transform="translate(173.736 0) rotate(90)" fill="#6198cc" />
+        </g>
+        <g transform="translate(614.888 544.081)" class="weight-arrows">
+          <line x2="147.182" transform="translate(0 15.07)" fill="none" stroke="#6198cc" stroke-width="10" />
+          <path d="M14.627,0,29.254,29.022H0Z" transform="translate(170.808 0) rotate(90)" fill="#6198cc" />
+        </g>
+        <g transform="translate(614.888 684.817) rotate(-14)" class="weight-arrows">
+          <line x2="153.48" transform="translate(0 14.184)" fill="none" stroke="#6198cc" stroke-width="10" />
+          <path d="M14.627,24.822,29.254,0H0Z" transform="translate(148.866 29.254) rotate(-90)" fill="#6198cc" />
+        </g>
+        <g transform="translate(337.577 400.462)">
+          <g transform="translate(0 0)" class="starting-data-arrows">
+            <path d="M112.793,400.5h34.052" transform="translate(-112.793 -385.873)" fill="none" stroke="#6198cc"
+              stroke-width="10" />
+            <g transform="translate(43.527 0.201) rotate(90)" fill="#6198cc">
+              <path
+                d="M 27.76229667663574 13.5 L 1.237703561782837 13.5 L 14.5 0.6950241327285767 L 27.76229667663574 13.5 Z"
+                stroke="none" />
+              <path
+                d="M 14.5 1.39003849029541 L 2.475397109985352 13 L 26.52460289001465 13 L 14.5 1.39003849029541 M 14.5 0 L 29 14 L 0 14 L 14.5 0 Z"
+                stroke="none" fill="#6198cc" />
+            </g>
+          </g>
+          <g transform="translate(0 143.619)" class="starting-data-arrows">
+            <path d="M112.793,400.5h34.052" transform="translate(-112.793 -385.873)" fill="none" stroke="#6198cc"
+              stroke-width="10" />
+            <g transform="translate(43.527 -0.418) rotate(90)" fill="#6198cc">
+              <path
+                d="M 28.73148536682129 13.5 L 1.268512010574341 13.5 L 14.99998950958252 0.6839460134506226 L 28.73148536682129 13.5 Z"
+                stroke="none" />
+              <path
+                d="M 14.99998950958252 1.367892265319824 L 2.537025451660156 13 L 27.46297073364258 13 L 14.99998950958252 1.367892265319824 M 14.99998950958252 0 L 30 14 L -1.9073486328125e-06 14 L 14.99998950958252 0 Z"
+                stroke="none" fill="#6198cc" />
+            </g>
+          </g>
+          <g transform="translate(0 287.238)" class="starting-data-arrows">
+            <path d="M112.793,400.5h34.052" transform="translate(-112.793 -385.873)" fill="none" stroke="#6198cc"
+              stroke-width="10" />
+            <g transform="translate(43.622 0) rotate(90)" fill="#6198cc">
+              <path
+                d="M 28.02012062072754 13.68375492095947 L 1.233864307403564 13.68375492095947 L 14.62699222564697 0.6964775323867798 L 28.02012062072754 13.68375492095947 Z"
+                stroke="none" />
+              <path
+                d="M 14.62699222564697 1.392950057983398 L 2.467737197875977 13.18374538421631 L 26.78624725341797 13.18374538421631 L 14.62699222564697 1.392950057983398 M 14.62699222564697 -4.76837158203125e-06 L 29.25398254394531 14.18374538421631 L 1.9073486328125e-06 14.18374538421631 L 14.62699222564697 -4.76837158203125e-06 Z"
+                stroke="none" fill="#6198cc" />
+            </g>
+          </g>
+        </g><text class="weight-values" transform="translate(560.104 421.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="0" y="0">0.0</tspan>
+        </text><text class="weight-values" transform="translate(560.104 566.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="0" y="0">0.0</tspan>
+        </text><text class="weight-values" transform="translate(560.104 712.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="0" y="0">0.0</tspan>
+        </text><text id="training-data-label" transform="translate(451.104 118.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="-46.034" y="0">Données</tspan>
+          <tspan x="-76.715" y="27">d’entraînement</tspan>
+        </text><text transform="translate(205.104 212.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="0" y="0">Attributs</tspan>
+        </text><text transform="translate(1002.104 179.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="-51.138" y="0">Classe ou</tspan>
+          <tspan x="-71.6" y="27">étiquette-cible</tspan>
+        </text><text transform="translate(1371.104 469.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="0" y="0">Étiquette-cible</tspan>
+        </text><text transform="translate(1371.104 609.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="-51.138" y="0">Prédiction</tspan>
+          <tspan x="-71.6" y="27">étiquette-cible</tspan>
+        </text><text transform="translate(644.104 768.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="-116.342" y="0">Ajustement des poids /</tspan>
+          <tspan x="-139.359" y="27">rétropropagation de l’erreur</tspan>
+        </text><text transform="translate(278.104 363.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="0" y="0">Biais</tspan>
+        </text><text transform="translate(260.104 624.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="0" y="0">Entrée 1</tspan>
+        </text><text transform="translate(260.104 768.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="0" y="0">Entrée 2</tspan>
+        </text><text id="neuron-label" transform="translate(984.104 388.663)" font-size="28"
+          font-family="Arial-BoldMT, Arial" font-weight="700">
+          <tspan x="0" y="0">Neurone</tspan>
+        </text><text transform="translate(1671.104 559.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="-31.956" y="0">Calcul</tspan>
+          <tspan x="-39.627" y="27">d’erreur</tspan>
+        </text><text id="training-data-loop-label" transform="translate(723.104 150.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="-54.333" y="0">Boucle sur</tspan>
+          <tspan x="-62.02" y="27">les données</tspan>
+        </text><text id="iterations-loop-label" transform="translate(1685.104 126.163)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="-72.229" y="0">Boucle sur les</tspan>
+          <tspan x="-109.969" y="27">itérations ou époques</tspan>
+          <tspan x="-76.715" y="54">d’entraînement</tspan>
+        </text><text id="training-in-progress-label" transform="translate(1041.104 397.663)" font-size="23"
+          font-family="ArialMT, Arial">
+          <tspan x="-90.759" y="0">Calcul en cours…</tspan>
+        </text>
+        <g transform="translate(48 57)" fill="none" stroke="#6198cc" stroke-width="10">
+          <rect x="5" y="5" width="1787" height="935" rx="45" fill="none" id="iterations-loop-path" />
+          <path id="iterations-loop-arrow" d="M32,0,64,54.3H0Z" transform="translate(1210.948 -27) rotate(90)"
+            fill="#6198cc" />
+        </g>
+      </svg>
+    </div>
+    <div class="controls">
+      <div class="controls-wrapper">
+        <section class="logical-functions">
+          <p class="section-title">Fonction logique à apprendre</p>
+          <label for="logical-and" class="radio-container">
+            ET
+            <input type="radio" id="logical-and" name="logical-functions" checked="checked" data-function="and">
+            <span class="check"></span>
+          </label>
+          <label for="logical-or" class="radio-container">
+            OU
+            <input type="radio" id="logical-or" name="logical-functions" data-function="or">
+            <span class="check"></span>
+          </label>
+          <label for="logical-no" class="radio-container">
+            NON
+            <input type="radio" id="logical-no" name="logical-functions" data-function="no">
+            <span class="check"></span>
+          </label>
+          <label for="logical-no-and" class="radio-container">
+            NON ET
+            <input type="radio" id="logical-no-and" name="logical-functions" data-function="no-and">
+            <span class="check"></span>
+          </label>
+          <label for="logical-nor" class="radio-container">
+            NON OU
+            <input type="radio" id="logical-nor" name="logical-functions" data-function="nor">
+            <span class="check"></span>
+          </label>
+          <label for="logical-xor" class="radio-container">
+            OU Exclusif
+            <input type="radio" id="logical-xor" name="logical-functions" data-function="xor">
+            <span class="check"></span>
+          </label>
+        </section>
+
+        <section class="iterations-container">
+          <p class="section-title">Nombre d'époques (itérations)</p>
+          <div class="slider-wrapper">
+            <input type="range" id="iterations-range" min="1" max="25" value="1" step="1" class="iterations-slider">
+            <label for="iterations-range" id="iterations-range-label">1</label>
+          </div>
+        </section>
+
+        <section class="activation-container">
+          <p class="section-title">Activation</p>
+          <select id="activation-select">
+            <option value="tanh">Courbe en S centrée sur 0 ou tanh</option>
+            <option value="echelon" selected>Échelon</option>
+            <option value="sigmoide">Courbe en S positive ou sigmoïde</option>
+            <option value="relu">Rampe droite positive ou ReLU</option>
+          </select>
+        </section>
+
+        <a href="#" class="training-btn btn">
+          Entraîner
+        </a>
+
+      </div>
+      <section class="calculations-container">
+        <p class="section-title">Calcul fait par le perceptron</p>
+        <p class="calculations"></p>
+        <a href="#" class="reset-btn btn">
+          Nouvel entraînement
+        </a>
+      </section>
+
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.0/MotionPathPlugin.min.js"></script>
+  <script>
+    const sortie_affichage_calcul = document.querySelector('.calculations');
+
+    // Nombre aleatoire entre 0 et 1
+    function nombreAleatoire() {
+      return Math.random();
+    }
+
+    function fixerPrecision(num, precision = 2) {
+      return num.toFixed(precision);
+    }
+
+    // function afficherMessage(message, indicateur = true) {
+    //     if (indicateur) {
+    //         var element = document.createElement('strong');
+    //         element.innerHTML = message + '<br/>';
+    //         document.body.appendChild(element);
+    //     }
+    // }
+
+
+    class Neurone {
+      constructor(donnees_entree, poids_donnees_entree, biais = 1, poids_biais = 1.0, fn_activation = 'echelon') {
+        this.donnees_entree = donnees_entree;
+        if (poids_donnees_entree) {
+          this.poids_donnees_entree = poids_donnees_entree;
+        } else {
+          // Initialiser avec des poids choisis aléatoirement
+          this.poids_donnees_entree = new Array(donnees_entree.length)
+          for (let i = 0; i < donnees_entree.length; i++) {
+            this.poids_donnees_entree[i] = nombreAleatoire() * 2 - 1;
+          }
+        }
+        // console.table(this.poids_donnees_entree);
+
+        this.biais = biais;
+        this.poids_biais = poids_biais;
+        this.somme_ponderee_donnees_entree = 0.0;
+        this.fn_activation = fn_activation;
+        this.neurone_actif = false;
+        this.resultat_activation = 0.0;
+        this.calcul_a_afficher = "";
+        // this.afficher();
+      }
+      afficher(indicateur = true) {
+        if (indicateur) {
+          afficherMessage("");
+          afficherMessage("Etat du Neurone");
+          afficherMessage("donnees_entree: " + this.donnees_entree);
+          afficherMessage("poids_donnees_entree: " + this.poids_donnees_entree);
+          afficherMessage("biais: " + this.biais);
+          afficherMessage("poids_biais: " + this.poids_biais);
+          afficherMessage("somme_ponderee_donnees_entree: " + this.somme_ponderee_donnees_entree);
+          afficherMessage("fn_activation: " + this.fn_activation);
+          afficherMessage("neurone_actif: " + this.neurone_actif);
+          afficherMessage("resultat_activation: " + this.resultat_activation);
+          afficherMessage("calcul_a_afficher: " + this.calcul_a_afficher);
+          afficherMessage("");
+        }
+      }
+      // Fonctions d'activation https://en.wikipedia.org/wiki/Activation_function
+      // Échelon ou échelon binaire (en anglais, binary step)     
+      echelon(x) {
+        return (x > 0) ? 1 : -1;
+      }
+       // Courbe en S verticale entre 0 et +1 
+      // Appelée fonction sigmoïde ou fonction logistique
+      sigmoide(x) {
+        return (1 / (1 + Math.pow(Math.E,-x)));
+      }
+      // Fonction tanh ou tangente_hyperbolique
+      tangente_hyperbolique(x) {
+        return Math.tanh(x);
+      }
+      // Fonction ReLU (Rectified Linear Unit)
+      relu(x) {
+        return (x < 0) ? 0 : x;
+      }
+      // Fonction sommation - somme ponderée des entrées
+      somme_ponderee() {
+        var somme_ponderee_donnees_entree = this.biais * this.poids_biais;
+        this.poids_donnees_entree.forEach((poids, index) => { somme_ponderee_donnees_entree += this.donnees_entree[index] * poids });
+        this.somme_ponderee_donnees_entree = somme_ponderee_donnees_entree;
+        return this.somme_ponderee_donnees_entree;
+      }
+      activation_neurone() {
+        this.calcul_a_afficher = "";
+        var x = this.somme_ponderee(); // Jonathan Pouliot: Assigné à une variable, car erreur de console.
+        switch (this.fn_activation) {
+          case "echelon":
+            this.resultat_activation = parseFloat(fixerPrecision(this.echelon(x)));
+            this.calcul_a_afficher = "&eacute;chelon( " + fixerPrecision(x) + " ) = " + fixerPrecision(this.resultat_activation, 2);
+            this.calcul_a_afficher += "<br><br>Activation: &Eacute;chelon, entre 0 et +1, avec un seuil de d&eacute;clenchement pour une valeur sup&eacute;rieure &agrave; z&eacute;ro";
+            if (this.resultat_activation > 0.0) {
+              this.calcul_a_afficher += "<br>Notez que le neurone est 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = true;
+              this.resultat_activation = 1.0;
+            } else {
+              this.calcul_a_afficher += "<br>Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = false;
+              this.resultat_activation = 0.0;
+            }
+            break;
+          case "sigmoide":
+            this.resultat_activation = parseFloat(fixerPrecision(this.echelon(x)));
+            this.calcul_a_afficher = "sigmo" + "&iuml;" + "de( " + fixerPrecision(x, 2) + " ) = " + fixerPrecision(this.resultat_activation, 2);
+            this.calcul_a_afficher += "<br><br>Activation: Courbe en S positive, entre 0 et +1, ou sigmo&iuml;de, ou fonction logistique, avec un seuil de d&eacute;clenchement &agrave; 0.5";
+            if (this.resultat_activation >= 0.5) {
+              this.calcul_a_afficher += "<br>Notez que le neurone est 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = true;
+              this.resultat_activation = 1.0;
+            } else {
+              this.calcul_a_afficher += "<br>Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = false;
+              this.resultat_activation = 0.0;
+            }
+            break;
+          case "tanh":
+            this.resultat_activation = parseFloat(fixerPrecision(this.tangente_hyperbolique(x)));
+            this.calcul_a_afficher = "tanh( " + fixerPrecision(x, 2) + " ) = " + fixerPrecision(this.resultat_activation, 2);
+            this.calcul_a_afficher += "<br><br>Activation: Courbe en S centr&eacute;e sur z&eacute;ro, entre -1 et +1 ou tangente hyperbolique, avec un seuil de d&eacute;clenchement pour une valeur sup&eacute;rieure &agrave; z&eacute;ro";
+            if (this.resultat_activation > 0.0) {
+              this.calcul_a_afficher += "<br>Notez que le neurone est 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = true;
+              this.resultat_activation = 1.0;
+            } else {
+              this.calcul_a_afficher += "<br>Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = false;
+              this.resultat_activation = 0.0;
+            }
+            break;
+          case "relu":
+            this.resultat_activation = parseFloat(fixerPrecision(this.relu(x)));
+            this.calcul_a_afficher = "relu( " + fixerPrecision(x, 2) + " ) = " + fixerPrecision(this.resultat_activation, 2);
+            this.calcul_a_afficher += "<br><br>Activation: Rampe droite &agrave; positive ou unit&eacute lin&eacute;aire rectifi&eacute;e, en anglais ReLU, avec un seuil de d&eacute;clenchement pour une valeur sup&eacute;rieure &agrave; z&eacute;ro";
+            if (this.resultat_activation > 0.0) {
+              this.calcul_a_afficher += "<br>Notez que le neurone est 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = true;
+              this.resultat_activation = 1.0;
+            } else {
+              this.calcul_a_afficher += "<br>Notez que le neurone n'est pas 'd&eacute;clench&eacute;'.";
+              this.neurone_actif = false;
+              this.resultat_activation = 0.0;
+            }
+            break;
+          default:
+            this.resultat_activation = "ERREUR";
+        }
+        return this.resultat_activation;
+      }
+    }
+
+    // Perceptron
+    // Inspiration https://github.com/jg-fisher/perceptron
+    class Perceptron {
+
+      constructor(attributs_entrainement, etiquettes_cibles, epoques = 1, gain_gradient = 0.1, activation = 'echelon') {
+        this.attributs_entrainement = attributs_entrainement;
+        this.etiquettes_cibles = etiquettes_cibles;
+        this.nombre_exemples = 0;
+        this.gain_gradient = gain_gradient;
+        this.epoques = epoques;
+        this.exactitude = 0;
+        this.activation = activation;
+        this.neurone = new Neurone(attributs_entrainement[0], null, 1.0, 1.0, activation);
+        this.echec_entrainement = false;
+        // this.afficher();
+      }
+      sleep(durationInMilliseconds) {
+        return new Promise(resolve => setTimeout(resolve, durationInMilliseconds));
+      }
+      afficher(indicateur = true) {
+        if (indicateur) {
+          afficherMessage("");
+          afficherMessage("Etat du Perceptron");
+          afficherMessage("Attributs d'entrainement: " + this.attributs_entrainement);
+          afficherMessage("Etiquettes cibles: " + this.etiquettes_cibles);
+          afficherMessage("Nombre d'exemples: " + this.nombre_exemples);
+          afficherMessage("Gain gradient: " + this.gain_gradient);
+          afficherMessage("Nombre d'époques: " + this.epoques);
+          afficherMessage("Exactitude: " + this.exactitude);
+          afficherMessage("Échec de l'entraînement: " + this.echec_entrainement);
+          afficherMessage("");
+        }
+      }
+      // Prédiction
+      predire(entree) {
+        this.neurone.donnees_entree = entree;
+        this.neurone.somme_ponderee();
+        return this.neurone.activation_neurone();
+      }
+
+      // Entraîner le Perceptron sur des données
+      async entrainer() {
+        this.echec_entrainement = false;
+
+        // Début des animations
+        const animations = new Animations();
+
+        animations.moveLabels('#neuron-label', null, - 17);
+        animations.moveLabels('#training-data-label', - 150, - 15);
+        animations.toggleAnimationElements(true);
+
+        // Sliders
+        const weightSliderKnobs = document.querySelectorAll('.weight-slider-knob');
+        const weightSliderValues = document.querySelectorAll('.weight-values');
+
+        // Pour chaque époque (passage dans le jeu des données d'entraînement) itérer
+        for (var epoque = 0; epoque <= this.epoques; epoque++) {
+
+          this.exactitude = 0.0;
+          this.nombre_exemples = 0;
+          let exactitude = 0.0;
+
+          // Pour chaque exemple de données d'entraînement, itérer sur les attributs
+          for (var i_attribut = 0; i_attribut < this.attributs_entrainement.length; i_attribut++) {
+            // Faire une prédiction - chainage avant
+            var prediction = this.predire(this.attributs_entrainement[i_attribut]);
+            // Mettre à jour la mesure d'exactitude
+            if (this.etiquettes_cibles[i_attribut] === prediction) {
+              this.exactitude += 1;
+            }
+            // Mettre à jour le nombre d'exemples ou données d'entraînement
+            this.nombre_exemples += 1;
+            // Calcul de l'erreur, perte ou coût
+            var erreur = this.etiquettes_cibles[i_attribut] - prediction;
+            // Mise à jour des paramètres ou poids en tenant compte de l'erreur
+            for (var i_poids = 0; i_poids < this.neurone.poids_donnees_entree.length; i_poids++) {
+              this.neurone.poids_donnees_entree[i_poids] += erreur * this.attributs_entrainement[i_attribut][i_poids] * this.gain_gradient;
+              if (this.neurone.poids_donnees_entree[i_poids] > 1.0) {
+                this.neurone.poids_donnees_entree[i_poids] = 1.0;
+              } else if (this.neurone.poids_donnees_entree[i_poids] < -1.0) {
+                this.neurone.poids_donnees_entree[i_poids] = -1.0;
+              }
+            }
+            // Mise à jour du biais 
+            this.neurone.poids_biais += erreur * this.gain_gradient;
+            if (this.neurone.poids_biais > 1.0) {
+              this.neurone.poids_biais = 1.0;
+            } else if (this.neurone.poids_biais < -1.0) {
+                this.neurone.poids_biais = -1.0;
+            }
+          }
+          // Afficher l'exactitude après chaque époque (passage dans le jeu des données d'entraînement)
+          exactitude = fixerPrecision(this.exactitude / this.nombre_exemples);
+          let message_exactitude = " Exactitude: " + exactitude + "<br>";
+
+          // Afficher l'exactitude à toutes les 10 époques
+          // if ((epoque % 1) === 0) {
+
+          sortie_affichage_calcul.innerHTML += "Nbr époques: " + epoque + ", ";
+          sortie_affichage_calcul.innerHTML += message_exactitude;
+
+          animations.animate()
+
+          // Slider : biais
+          animations.moveSlider(
+            weightSliderKnobs[0],
+            (this.neurone.poids_biais));
+          animations.setTextValue(weightSliderValues[0], this.neurone.poids_biais.toFixed(2));
+          // Slider : première entrée
+          animations.moveSlider(
+            weightSliderKnobs[1],
+            this.neurone.poids_donnees_entree[0]);
+          animations.setTextValue(weightSliderValues[1], this.neurone.poids_donnees_entree[0].toFixed(2));
+          // Slider : deuxième entrée
+          animations.moveSlider(
+            weightSliderKnobs[2],
+            this.neurone.poids_donnees_entree[1]);
+          animations.setTextValue(weightSliderValues[2], this.neurone.poids_donnees_entree[1].toFixed(2));
+
+          // Precision label
+          animations.setTextValue(document.querySelector('#precision-label'), parseFloat(1.0-exactitude).toFixed(2))
+
+          /*
+          Afin d'avoir un effet de simulation, il est important que la durée
+          du sleep soit la même que la durée de la plus longue animation
+          */
+          await this.sleep(animations.getDuration() * 1000);
+
+          // }
+
+          // Arrêter l'apprentissage lorsque l'exactitude atteint 1.0
+          if (exactitude == 1.0) {
+            break;
+          }
+
+        }
+        // Si l'exactitude est inférieure à 50% alors l'entraînement a échoué
+        if (fixerPrecision(this.exactitude / this.nombre_exemples) < 1.0) {
+          this.echec_entrainement = true;
+        } else {
+          this.echec_entrainement = false;
+        }
+
+        animations.endOfAnimations(() => {
+          // Show the reset button
+          document.querySelector('.reset-btn').style.display = "block";
+        });
+      }
+      afficher_poids_modele() {
+        if (!this.echec_entrainement) {
+          sortie_affichage_calcul.innerHTML += "<br><strong>Après entraînement:</strong><br>" +
+            "<br>poids du biais: " + fixerPrecision(this.neurone.poids_biais) +
+            "<br>poids entree 1: " + fixerPrecision(this.neurone.poids_donnees_entree[0]) +
+            "<br>poids entree 2: " + fixerPrecision(this.neurone.poids_donnees_entree[1]);
+        } else {
+          sortie_affichage_calcul.innerHTML += "<br><strong>Échec de l'entraînement!</strong><br>"
+        }
+      }
+    }
+
+    // Jonathan Pouliot
+    class Animations {
+      constructor(duration = 3) {
+        gsap.registerPlugin(MotionPathPlugin); // IMPORTANT
+        this.timeline = gsap.timeline();
+        this.duration = duration;
+      }
+
+      toggleAnimationElements(toggle = true) {
+        gsap.to([
+          '#attributes-arrow',
+          '#calculations-arrow',
+          '#training-data-loop',
+          '#training-data-loop-label',
+          '#iterations-loop-path',
+          '#iterations-loop-arrow',
+          '#iterations-loop-label',
+          '#training-in-progress-label',
+          '#precision-label'
+        ], { opacity: toggle ? 1 : 0 });
+      }
+      toggleElement(element, toggle) {
+        gsap.to(element, {
+          opacity: toggle ? 1 : 0
+        })
+      }
+      endOfAnimations(completeCallback = null) {
+        this.toggleElement('#iterations-loop-arrow', false);
+        this.toggleElement('#training-data-loop', false);
+        this.toggleElement("#training-in-progress-label", false);
+        if (completeCallback !== null) {
+          completeCallback();
+        }
+      }
+      moveLabels(element, x, y, completeCallback = null) {
+        gsap.to(element, {
+          x: x == null ? gsap.getProperty(element, 'x') : gsap.getProperty(element, 'x') + x,
+          y: y == null ? gsap.getProperty(element, 'y') : gsap.getProperty(element, 'y') + y,
+          onComplete: completeCallback
+        });
+      }
+      moveSlider(sliderKnob, value) {
+        // 50 est l'équivalent de 0 zéro dans les SVG, donc la valeur doit être normalisée
+        let x = Math.abs(((value * 100) / 2) + 50);
+
+        if (x > 100) {
+          x = 100;
+        } else if (x < 0) {
+          x = 0;
+        }
+
+        gsap.to(sliderKnob, {
+          ease: "sine.out",
+          x
+        });
+      }
+      moveAlongPath(elementToAnimate, elementPath) {
+        gsap.to(elementToAnimate, {
+          ease: "sine.out",
+          motionPath: {
+            path: elementPath,
+            align: elementPath,
+            alignOrigin: [0.5, 0.5],
+            autoRotate: 90,
+          },
+        });
+      }
+      stop() {
+        this.toggleAnimationElements(false);
+        this._resetLabels();
+      }
+      reset() {
+        this.stop();
+      }
+      animate() {
+        this._prepareAnimations();
+        this.timeline.play();
+      }
+      getDuration() {
+        return this.duration;
+      }
+      setTextValue(element, value) {
+        element.textContent = value;
+      }
+      _resetLabels() {
+        this.moveLabels('#neuron-label', null, 17);
+        this.moveLabels('#training-data-label', 150, 15);
+      }
+      _prepareAnimations() {
+
+        // Convert the <rect/> to <path/>
+        MotionPathPlugin.convertToPath("#iterations-loop-path")
+        // Set default parameters of certain elements before the animations
+        gsap.set('#iterations-loop-path', { opacity: 1 });
+        gsap.set('.starting-data-arrows', { scaleX: 0 });
+        gsap.set('.weight-arrows', { scaleX: 0 });
+        gsap.set('#training-out-arrow', { scaleX: 0 });
+
+        // Attributes Arrow and Path
+        this.timeline.
+          to("#attributes-arrow", {
+            ease: "sine.out",
+            motionPath: {
+              path: "#attributes-arrow-path",
+              align: "#attributes-arrow-path",
+              alignOrigin: [0.5, 0.5],
+              autoRotate: 90,
+            },
+            duration: this.duration
+          })
+          // Calculations Arrow and Path
+          .to("#calculations-arrow", {
+            ease: "sine.out",
+            motionPath: {
+              path: "#calculations-arrow-path",
+              align: "#calculations-arrow-path",
+              alignOrigin: [0.5, 0.5],
+              autoRotate: 90,
+            },
+            duration: this.duration
+          }, '<')
+          // Training Data loop arrow
+          .to("#training-data-loop", {
+            rotate: "+=360",
+            ease: "none",
+            transformOrigin: "center center",
+            duration: this.duration,
+            paused: false,
+          }, '<')
+          // Sum Button
+          .to("#calculations-button", {
+            rotate: "+=180",
+            ease: "back",
+            transformOrigin: "center center",
+            duration: this.duration,
+            paused: false,
+          }, '<')
+          // Calculations Arrow and Path
+          .to("#iterations-loop-arrow", {
+            ease: "sine.out",
+            motionPath: {
+              path: "#iterations-loop-path",
+              align: "#iterations-loop-path",
+              alignOrigin: [0.5, 0.5],
+              autoRotate: 90,
+            },
+            duration: this.duration
+          }, '<')
+          // Attributes Arrows
+          .to(".starting-data-arrows", {
+            scaleX: 1,
+            duration: 1,
+            stagger: 0.2,
+            delay: 0.5
+          }, '<')
+          // Weight sliders arrows
+          .to(".weight-arrows", {
+            scaleX: 1,
+            duration: 1,
+            stagger: 0.2,
+            delay: .5
+          }, '<')
+          // Out arrow
+          .to("#training-out-arrow", {
+            scaleX: 1,
+            duration: 1,
+            delay: .5
+          }, '<')
+      }
+    }
+
+    /*
+    Tout le code suivant a été ajouté par Jonathan Pouliot
+    */
+
+    // Initialisation de valeurs par défaut
+    let attributs_entrainement = [[0, 0], [0, 1], [1, 0], [1, 1]];
+    let etiquettes_cibles = [0, 0, 0, 1];
+    let selectedActivation = 'echelon';
+    let selectedActivation_i18n = "Échelon";
+    let logicalFunction_i18n = "ET";
+    let totalIterations = 1;
+
+    const formatLogicalFunctionMatrix = (element, matrix, func) => {
+      for (let i = 0; i < matrix[func].length; i++) {
+        element[i].firstElementChild.textContent = matrix[func][i].join(', ');
+      }
+    }
+
+    /**
+     * Get the target labels of a specified matrix
+     * 
+     * @param {Array<Array<number>> | [number[]]} matrix 
+     */
+    const getTargetLabels = (matrix) => {
+      let targetLabels = [];
+
+      for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[i].length; j++) {
+
+          if (j == matrix[i].length - 1) {
+            targetLabels.push(matrix[i][j]);
+          }
+
+        }
+      }
+
+      return targetLabels;
+    }
+
+    const changeLogicalFunction = () => {
+
+      const logicalFunctions = document.querySelectorAll('.radio-container input[type="radio"]');
+      const trainingDataMatrixText = document.querySelectorAll('.training-data-matrix');
+      const trainingDataMatrices = {
+        'and': [
+          [0, 0, 0],
+          [0, 1, 0],
+          [1, 0, 0],
+          [1, 1, 1]
+        ],
+        'or': [
+          [0, 0, 0],
+          [0, 1, 1],
+          [1, 0, 1],
+          [1, 1, 1]
+        ],
+        'no': [
+          [0, 0, 1],
+          [0, 1, 1],
+          [1, 0, 0],
+          [1, 1, 0]
+        ],
+        'no-and': [
+          [0, 0, 1],
+          [0, 1, 1],
+          [1, 0, 1],
+          [1, 1, 0]
+        ],
+        'nor': [
+          [0, 0, 1],
+          [0, 1, 0],
+          [1, 0, 0],
+          [1, 1, 0]
+        ],
+        'xor': [
+          [0, 0, 0],
+          [0, 1, 1],
+          [1, 0, 1],
+          [1, 1, 0]
+        ]
+      }
+
+      logicalFunctions.forEach(radio => {
+        radio.addEventListener('change', e => {
+          const selectedFunction = e.currentTarget.dataset.function;
+
+          if (selectedFunction !== null || typeof selectedFunction !== undefined) {
+            formatLogicalFunctionMatrix(trainingDataMatrixText, trainingDataMatrices, selectedFunction);
+            etiquettes_cibles = getTargetLabels(trainingDataMatrices[selectedFunction]); // Store globally
+            logicalFunction_i18n = e.currentTarget.parentNode.innerText;
+          }
+        });
+      });
+    }
+
+    const changeIterations = () => {
+      const iterationsSlider = document.querySelector('#iterations-range');
+      const iterationsLabel = document.querySelector("#iterations-range-label");
+
+      if (iterationsSlider != null) {
+        iterationsSlider.addEventListener('input', e => {
+
+          let value = e.currentTarget.value;
+          totalIterations = value; // Store globally
+          iterationsLabel.textContent = value;
+
+        });
+      }
+    }
+
+    const changeActivation = () => {
+      const activationSelect = document.querySelector("#activation-select");
+
+      if (activationSelect !== null) {
+        activationSelect.addEventListener('change', e => {
+
+          // Store the selected activation
+          selectedActivation = e.currentTarget.value;
+          selectedActivation_i18n = e.target.options[e.target.selectedIndex].text;
+
+          const activations = document.querySelectorAll('.activations');
+          activations.forEach(a => {
+            if (a.dataset.activation === selectedActivation) {
+              a.style.opacity = 1;
+            } else {
+              a.style.opacity = 0.25;
+            }
+          })
+        });
+      }
+    }
+
+    /**
+     * Toggle between the controls and the calculations/training containers
+     * 
+     * TRUE for controls, FALSE for training/calculations
+     * @param {bool} toggle 
+     */
+    const toggleControlsPanel = (toggle = true) => {
+      const controlsWrapper = document.querySelector('.controls-wrapper');
+      const calculationsContainer = document.querySelector('.calculations-container');
+
+      if (toggle) {
+        controlsWrapper.style.display = "block";
+        calculationsContainer.style.display = "none";
+      } else {
+        controlsWrapper.style.display = "none";
+        calculationsContainer.style.display = "block";
+      }
+    }
+
+    const startTraining = async () => {
+      // Info Text
+      document.querySelector('.calculations').innerHTML = `Apprentissage d'une fonction logique <strong>${logicalFunction_i18n.toUpperCase()}</strong><br><br>
+    Activation:<br>${selectedActivation_i18n}<br><br>
+    Données d'entraînement:<br>[[${attributs_entrainement.join("],[")}]]<br><br>
+    Étiquettes cibles:<br> [${etiquettes_cibles.join(',')}]<br><br>`;
+
+      perceptron = new Perceptron(attributs_entrainement, etiquettes_cibles, totalIterations, gain_gradient = 0.1, selectedActivation);
+      await perceptron.entrainer();
+      perceptron.afficher_poids_modele();
+    }
+
+    const startOrResetTraining = () => {
+      const trainingBtn = document.querySelector(".training-btn");
+      const newTrainingBtn = document.querySelector('.reset-btn');
+
+      if (trainingBtn !== null) {
+        trainingBtn.addEventListener('click', e => {
+          toggleControlsPanel(false);
+          startTraining();
+        });
+      }
+
+      if (newTrainingBtn !== null) {
+        newTrainingBtn.addEventListener('click', e => {
+
+          // Reset the calculations
+          document.querySelector('.calculations').innerHTML = "";
+
+          const anims = new Animations();
+          anims.reset();
+
+          // Reset sliders labels values
+          document.querySelectorAll('.weight-values').forEach(label => anims.setTextValue(label, "0.0"));
+
+          // Reset sliders
+          const sliders = document.querySelectorAll('.weight-slider-knob');
+          anims.moveSlider(sliders, 0);
+
+          // Reset the calculations panel
+          document.querySelector('.reset-btn').style.display = "none";
+
+          toggleControlsPanel(true);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      changeLogicalFunction();
+      changeIterations();
+      changeActivation();
+      startOrResetTraining();
+    });
+
+  </script>
+</body>
+
+</html>
