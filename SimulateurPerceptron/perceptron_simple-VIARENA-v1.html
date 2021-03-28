@@ -650,42 +650,44 @@ Initial SVG elements hiding
           <tspan x="0" y="0">0.0</tspan>
         </text><text id="training-data-label" transform="translate(451.104 118.663)" font-size="23"
           font-family="ArialMT, Arial">
-          <tspan x="-46.034" y="0">Données</tspan>
-          <tspan x="-76.715" y="27">d’entraînement</tspan>
+          <tspan x="-46.034" y="0">Donn&eacute;es</tspan>
+          <tspan x="-76.715" y="27">d'entra&icirc;nement</tspan>
         </text><text transform="translate(205.104 212.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="0" y="0">Attributs</tspan>
         </text><text transform="translate(1002.104 179.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="-51.138" y="0">Classe ou</tspan>
-          <tspan x="-71.6" y="27">étiquette-cible</tspan>
+          <tspan x="-51" y="0">Classe ou</tspan>
+          <tspan x="-61" y="27">classe-cible</tspan>
         </text><text transform="translate(1371.104 469.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="0" y="0">Étiquette-cible</tspan>
+          <tspan x="28" y="0">Vraie</tspan>
+          <tspan x="0" y="20">classe-cible</tspan>
+          <!-- <tspan style="font-size:200%" x="115" y="110">=</tspan> -->
         </text><text transform="translate(1371.104 609.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="-51.138" y="0">Prédiction</tspan>
-          <tspan x="-71.6" y="27">étiquette-cible</tspan>
+          <tspan x="-30" y="0">Pr&eacute;diction</tspan>
+          <tspan x="-40" y="27">classe-cible</tspan>
         </text><text transform="translate(644.104 768.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="-116.342" y="0">Ajustement des poids /</tspan>
-          <tspan x="-139.359" y="27">rétropropagation de l’erreur</tspan>
+          <tspan x="-139.359" y="27">r&eacute;tropropagation de l'erreur</tspan>
         </text><text transform="translate(278.104 363.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="0" y="0">Biais</tspan>
         </text><text transform="translate(260.104 624.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="0" y="0">Entrée 1</tspan>
+          <tspan x="0" y="0">Entr&eacute;e 1</tspan>
         </text><text transform="translate(260.104 768.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="0" y="0">Entrée 2</tspan>
+          <tspan x="0" y="0">Entr&eacute;e 2</tspan>
         </text><text id="neuron-label" transform="translate(984.104 388.663)" font-size="28"
           font-family="Arial-BoldMT, Arial" font-weight="700">
           <tspan x="0" y="0">Neurone</tspan>
         </text><text transform="translate(1671.104 559.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="-31.956" y="0">Calcul</tspan>
-          <tspan x="-39.627" y="27">d’erreur</tspan>
+          <tspan x="-39.627" y="27">d'erreur</tspan>
         </text><text id="training-data-loop-label" transform="translate(723.104 150.663)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-54.333" y="0">Boucle sur</tspan>
-          <tspan x="-62.02" y="27">les données</tspan>
+          <tspan x="-62.02" y="27">les donn&eacute;es</tspan>
         </text><text id="iterations-loop-label" transform="translate(1685.104 126.163)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-72.229" y="0">Boucle sur les</tspan>
-          <tspan x="-109.969" y="27">itérations ou époques</tspan>
-          <tspan x="-76.715" y="54">d’entraînement</tspan>
+          <tspan x="-109.969" y="27">it&eacute;rations ou &eacute;poques</tspan>
+          <tspan x="-76.715" y="54">d'entra&icirc;nement</tspan>
         </text><text id="training-in-progress-label" transform="translate(1041.104 397.663)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-90.759" y="0">Calcul en cours…</tspan>
@@ -700,7 +702,7 @@ Initial SVG elements hiding
     <div class="controls">
       <div class="controls-wrapper">
         <section class="logical-functions">
-          <p class="section-title">Fonction logique à apprendre</p>
+          <p class="section-title">Fonction logique &agrave; apprendre</p>
           <label for="logical-and" class="radio-container">
             ET
             <input type="radio" id="logical-and" name="logical-functions" checked="checked" data-function="and">
@@ -734,7 +736,7 @@ Initial SVG elements hiding
         </section>
 
         <section class="iterations-container">
-          <p class="section-title">Nombre d'époques (itérations)</p>
+          <p class="section-title">Nombre d'&eacute;poques (it&eacute;rations)</p>
           <div class="slider-wrapper">
             <input type="range" id="iterations-range" min="1" max="25" value="1" step="1" class="iterations-slider">
             <label for="iterations-range" id="iterations-range-label">1</label>
@@ -744,15 +746,15 @@ Initial SVG elements hiding
         <section class="activation-container">
           <p class="section-title">Activation</p>
           <select id="activation-select">
-            <option value="tanh">Courbe en S centrée sur 0 ou tanh</option>
-            <option value="echelon" selected>Échelon</option>
-            <option value="sigmoide">Courbe en S positive ou sigmoïde</option>
+            <option value="tanh">Courbe en S centr&eacute;e sur 0 ou tanh</option>
+            <option value="echelon" selected>&Eacute;chelon</option>
+            <option value="sigmoide">Courbe en S positive ou sigmo&iuml;de</option>
             <option value="relu">Rampe droite positive ou ReLU</option>
           </select>
         </section>
 
         <a href="#" class="training-btn btn">
-          Entraîner
+          Entra&icirc;ner
         </a>
 
       </div>
@@ -760,7 +762,7 @@ Initial SVG elements hiding
         <p class="section-title">Calcul fait par le perceptron</p>
         <p class="calculations"></p>
         <a href="#" class="reset-btn btn">
-          Nouvel entraînement
+          Nouvel entra&icirc;nement
         </a>
       </section>
 
@@ -925,11 +927,11 @@ Initial SVG elements hiding
     // Inspiration https://github.com/jg-fisher/perceptron
     class Perceptron {
 
-      constructor(attributs_entrainement, etiquettes_cibles, epoques = 1, gain_gradient = 0.1, activation = 'echelon') {
+      constructor(attributs_entrainement, etiquettes_cibles, epoques = 1, taux_d_apprentissage = 0.1, activation = 'echelon') {
         this.attributs_entrainement = attributs_entrainement;
         this.etiquettes_cibles = etiquettes_cibles;
         this.nombre_exemples = 0;
-        this.gain_gradient = gain_gradient;
+        this.taux_d_apprentissage = taux_d_apprentissage;
         this.epoques = epoques;
         this.exactitude = 0;
         this.activation = activation;
@@ -947,10 +949,10 @@ Initial SVG elements hiding
           afficherMessage("Attributs d'entrainement: " + this.attributs_entrainement);
           afficherMessage("Etiquettes cibles: " + this.etiquettes_cibles);
           afficherMessage("Nombre d'exemples: " + this.nombre_exemples);
-          afficherMessage("Gain gradient: " + this.gain_gradient);
-          afficherMessage("Nombre d'époques: " + this.epoques);
+          afficherMessage("Gain gradient: " + this.taux_d_apprentissage);
+          afficherMessage("Nombre d'&eacute;poques: " + this.epoques);
           afficherMessage("Exactitude: " + this.exactitude);
-          afficherMessage("Échec de l'entraînement: " + this.echec_entrainement);
+          afficherMessage("&Eacute;chec de l'entra&icirc;nement: " + this.echec_entrainement);
           afficherMessage("");
         }
       }
@@ -997,7 +999,7 @@ Initial SVG elements hiding
             var erreur = this.etiquettes_cibles[i_attribut] - prediction;
             // Mise à jour des paramètres ou poids en tenant compte de l'erreur
             for (var i_poids = 0; i_poids < this.neurone.poids_donnees_entree.length; i_poids++) {
-              this.neurone.poids_donnees_entree[i_poids] += erreur * this.attributs_entrainement[i_attribut][i_poids] * this.gain_gradient;
+              this.neurone.poids_donnees_entree[i_poids] += erreur * this.attributs_entrainement[i_attribut][i_poids] * this.taux_d_apprentissage;
               if (this.neurone.poids_donnees_entree[i_poids] > 1.0) {
                 this.neurone.poids_donnees_entree[i_poids] = 1.0;
               } else if (this.neurone.poids_donnees_entree[i_poids] < -1.0) {
@@ -1005,7 +1007,7 @@ Initial SVG elements hiding
               }
             }
             // Mise à jour du biais 
-            this.neurone.poids_biais += erreur * this.gain_gradient;
+            this.neurone.poids_biais += erreur * this.taux_d_apprentissage;
             if (this.neurone.poids_biais > 1.0) {
               this.neurone.poids_biais = 1.0;
             } else if (this.neurone.poids_biais < -1.0) {
@@ -1019,7 +1021,7 @@ Initial SVG elements hiding
           // Afficher l'exactitude à toutes les 10 époques
           // if ((epoque % 1) === 0) {
 
-          sortie_affichage_calcul.innerHTML += "Nbr époques: " + epoque + ", ";
+          sortie_affichage_calcul.innerHTML += "Nbr &eacute;poques: " + epoque + ", ";
           sortie_affichage_calcul.innerHTML += message_exactitude;
 
           animations.animate()
@@ -1071,12 +1073,12 @@ Initial SVG elements hiding
       }
       afficher_poids_modele() {
         if (!this.echec_entrainement) {
-          sortie_affichage_calcul.innerHTML += "<br><strong>Après entraînement:</strong><br>" +
+          sortie_affichage_calcul.innerHTML += "<br><strong>Apr&egrave;s entra&icirc;nement:</strong><br>" +
             "<br>poids du biais: " + fixerPrecision(this.neurone.poids_biais) +
             "<br>poids entree 1: " + fixerPrecision(this.neurone.poids_donnees_entree[0]) +
             "<br>poids entree 2: " + fixerPrecision(this.neurone.poids_donnees_entree[1]);
         } else {
-          sortie_affichage_calcul.innerHTML += "<br><strong>Échec de l'entraînement!</strong><br>"
+          sortie_affichage_calcul.innerHTML += "<br><strong>&Eacute;chec de l'entra&icirc;nement!</strong><br>"
         }
       }
     }
@@ -1260,7 +1262,7 @@ Initial SVG elements hiding
     let attributs_entrainement = [[0, 0], [0, 1], [1, 0], [1, 1]];
     let etiquettes_cibles = [0, 0, 0, 1];
     let selectedActivation = 'echelon';
-    let selectedActivation_i18n = "Échelon";
+    let selectedActivation_i18n = "&Eacute;chelon";
     let logicalFunction_i18n = "ET";
     let totalIterations = 1;
 
@@ -1407,10 +1409,10 @@ Initial SVG elements hiding
       // Info Text
       document.querySelector('.calculations').innerHTML = `Apprentissage d'une fonction logique <strong>${logicalFunction_i18n.toUpperCase()}</strong><br><br>
     Activation:<br>${selectedActivation_i18n}<br><br>
-    Données d'entraînement:<br>[[${attributs_entrainement.join("],[")}]]<br><br>
-    Étiquettes cibles:<br> [${etiquettes_cibles.join(',')}]<br><br>`;
+    Donn&eacute;es d'entra&icirc;nement:<br>[[${attributs_entrainement.join("],[")}]]<br><br>
+    &Eacute;tiquettes cibles:<br> [${etiquettes_cibles.join(',')}]<br><br>`;
 
-      perceptron = new Perceptron(attributs_entrainement, etiquettes_cibles, totalIterations, gain_gradient = 0.1, selectedActivation);
+      perceptron = new Perceptron(attributs_entrainement, etiquettes_cibles, totalIterations, taux_d_apprentissage = 0.1, selectedActivation);
       await perceptron.entrainer();
       perceptron.afficher_poids_modele();
     }
