@@ -112,7 +112,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   canvas_img.width = canvas_img.parentElement.clientWidth
                   canvas_img.height = canvas_img.parentElement.clientHeight
                   canvas_img.style.cursor = "crosshair";
-                  canvas_img,style.aspect-ratio = 4/3;
+                  canvas_img.style.aspect-ratio = 4/3;
                   canvas_img.setAttribute('draggable', false);
                   crosshair_v.setAttribute('draggable', false);
                   crosshair_h.setAttribute('draggable', false);
