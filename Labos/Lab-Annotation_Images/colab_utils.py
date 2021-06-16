@@ -118,7 +118,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   crosshair_h.setAttribute('draggable', false);
 
                   // bounding box containers
-                  const height = 600
+                  // const height = 600
+                  const height = 1500
                   var allBoundingBoxes = [];
                   var curr_image = 0
                   var im_height = 0;
