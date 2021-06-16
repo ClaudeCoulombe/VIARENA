@@ -109,6 +109,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   var image = new Image();
                   var canvas_img = document.createElement('canvas');
                   var ctx = canvas_img.getContext("2d");
+                  canvas_img.width = canvas_img.parentElement.clientWidth
+                  canvas_img.height = canvas_img.parentElement.clientHeight
                   canvas_img.style.cursor = "crosshair";
                   canvas_img.setAttribute('draggable', false);
                   crosshair_v.setAttribute('draggable', false);
