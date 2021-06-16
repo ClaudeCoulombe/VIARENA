@@ -47,8 +47,6 @@ def image_from_numpy(image):
 
   with io.BytesIO() as img_output:
     Image.fromarray(image).save(img_output, format='JPEG')
-    print(image.shape)
-    print(image.shape[0],image.shape[1])
     data = img_output.getvalue()
   data = str(base64.b64encode(data))[2:-1]
   
@@ -138,7 +136,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   image.onload = function() {
                       // normalize display height and canvas
                       // image.height = height;
-                      image_cont.height = canvas_img.height = image.naturalHeight;
+                      image_cont.height = canvas_img.height = image.height = image.naturalHeight;
                       image_cont.width = canvas_img.width = image.naturalWidth;
                       crosshair_v.style.height = image_cont.height + "px";
                       crosshair_h.style.width = image_cont.width + "px";
@@ -313,8 +311,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                     // onload init new canvas and display image
                     image.onload = function() {
                         // normalize display height and canvas
-                        image.height = height;
-                        image_cont.height = canvas_img.height = image.height;
+                        # image.height = height;
+                        image_cont.height = canvas_img.height = image.height = image.naturalHeight;
                         image_cont.width = canvas_img.width = image.naturalWidth;
                         crosshair_v.style.height = image_cont.height + "px";
                         crosshair_h.style.width = image_cont.width + "px";
