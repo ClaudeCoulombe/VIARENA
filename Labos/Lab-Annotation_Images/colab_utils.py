@@ -22,6 +22,9 @@ from typing import List
 from typing import Union
 import uuid
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 from IPython.display import display
 from IPython.display import Javascript
 import numpy as np
@@ -44,8 +47,11 @@ def image_from_numpy(image):
 
   with io.BytesIO() as img_output:
     Image.fromarray(image).save(img_output, format='JPEG')
+    print(image.shape)
+    print(image.shape[0],image.shape[1])
     data = img_output.getvalue()
   data = str(base64.b64encode(data))[2:-1]
+  
   return data
 
 
@@ -133,7 +139,6 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                       // normalize display height and canvas
                       // image.height = height;
                       image_cont.height = canvas_img.height = image.naturalHeight;
-                      alert(image.naturalHeight);
                       image_cont.width = canvas_img.width = image.naturalWidth;
                       crosshair_v.style.height = image_cont.height + "px";
                       crosshair_h.style.width = image_cont.width + "px";
