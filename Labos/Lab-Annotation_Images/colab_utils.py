@@ -133,6 +133,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                       // normalize display height and canvas
                       // image.height = height;
                       image_cont.height = canvas_img.height = image.naturalHeight;
+                      alert(image.naturalHeight);
                       image_cont.width = canvas_img.width = image.naturalWidth;
                       crosshair_v.style.height = image_cont.height + "px";
                       crosshair_h.style.width = image_cont.width + "px";
