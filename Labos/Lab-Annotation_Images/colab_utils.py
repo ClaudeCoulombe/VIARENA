@@ -22,9 +22,6 @@ from typing import List
 from typing import Union
 import uuid
 
-import matplotlib
-import matplotlib.pyplot as plt
-
 from IPython.display import display
 from IPython.display import Javascript
 import numpy as np
@@ -49,7 +46,6 @@ def image_from_numpy(image):
     Image.fromarray(image).save(img_output, format='JPEG')
     data = img_output.getvalue()
   data = str(base64.b64encode(data))[2:-1]
-  
   return data
 
 
@@ -97,7 +93,6 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   crosshair_v.style.marginTop = "23px";
                   var brdiv = document.createElement('br');
 
-
                   //init control elements
                   var next = document.createElement('button');
                   var prev = document.createElement('button');
@@ -109,17 +104,13 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   var image = new Image();
                   var canvas_img = document.createElement('canvas');
                   var ctx = canvas_img.getContext("2d");
-                  canvas_img.width = canvas_img.parentElement.clientWidth
-                  canvas_img.height = canvas_img.parentElement.clientHeight
                   canvas_img.style.cursor = "crosshair";
-                  canvas_img.style.aspect-ratio = 4/3;
                   canvas_img.setAttribute('draggable', false);
                   crosshair_v.setAttribute('draggable', false);
                   crosshair_h.setAttribute('draggable', false);
 
                   // bounding box containers
-                  // const height = 600
-                  const height = 1500
+                  const height = 600
                   var allBoundingBoxes = [];
                   var curr_image = 0
                   var im_height = 0;
@@ -139,8 +130,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   image.src = "data:image/png;base64," + img;
                   image.onload = function() {
                       // normalize display height and canvas
-                      // image.height = height;
-                      image_cont.height = canvas_img.height = image.height = image.naturalHeight;
+                      image.height = height;
+                      image_cont.height = canvas_img.height = image.height;
                       image_cont.width = canvas_img.width = image.naturalWidth;
                       crosshair_v.style.height = image_cont.height + "px";
                       crosshair_h.style.width = image_cont.width + "px";
@@ -151,7 +142,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   };
 
                   // move to next image in array
-                  next.textContent = "next image";
+                  // next.textContent = "next image";
+                  next.textContent = "image suivante";
                   next.onclick = function(){
                       if (curr_image < imgs.length - 1){
                           // clear canvas and load new image
@@ -159,13 +151,13 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                           errorlog.innerHTML = "";
                       }
                       else{
-                          errorlog.innerHTML = "All images completed!!";
+                          errorlog.innerHTML = "Toutes les images sont annotées";
                       }
                       resetcanvas();
                   }
 
                   //move forward through list of images
-                  prev.textContent = "prev image"
+                  prev.textContent = "image précédente"
                   prev.onclick = function(){
                       if (curr_image > 0){
                           // clear canvas and load new image
@@ -173,12 +165,12 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                           errorlog.innerHTML = "";
                       }
                       else{
-                          errorlog.innerHTML = "at the beginning";
+                          errorlog.innerHTML = "Vous êtes au début";
                       }
                       resetcanvas();
                   }
                   // on delete, deletes the last bounding box
-                  deleteButton.textContent = "undo bbox";
+                  deleteButton.textContent = "défaire le cadre";
                   deleteButton.onclick = function(){
                     boundingBoxes.pop();
                     ctx.clearRect(0, 0, canvas_img.width, canvas_img.height);
@@ -189,7 +181,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                     };
                   }
                   // on all delete, deletes all of the bounding box
-                  deleteAllbutton.textContent = "delete all"
+                  deleteAllbutton.textContent = "défaire tous les cadres"
                   deleteAllbutton.onclick = function(){
                     boundingBoxes = [];
                     ctx.clearRect(0, 0, canvas_img.width, canvas_img.height);
@@ -201,7 +193,7 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                   }
 
                   // on submit, send the boxes to display
-                  submit.textContent = "submit";
+                  submit.textContent = "Enregistrer les annotations...";
                   submit.onclick = function(){
                     errorlog.innerHTML = "";
 
@@ -315,8 +307,8 @@ def draw_bbox(image_urls, callbackId):  # pylint: disable=invalid-name
                     // onload init new canvas and display image
                     image.onload = function() {
                         // normalize display height and canvas
-                        # image.height = height;
-                        image_cont.height = canvas_img.height = image.height = image.naturalHeight;
+                        image.height = height;
+                        image_cont.height = canvas_img.height = image.height;
                         image_cont.width = canvas_img.width = image.naturalWidth;
                         crosshair_v.style.height = image_cont.height + "px";
                         crosshair_h.style.width = image_cont.width + "px";
@@ -482,7 +474,7 @@ def annotate(imgs: List[Union[str, np.ndarray]],  # pylint: disable=invalid-name
 
     # output the annotations to the errorlog
     with output.redirect_to_element('#errorlog'):
-      display('--boxes array populated--')
+      display('--les annotations sont mémorisées--')
 
   output.register_callback(callbackId, callbackFunction)
   draw_bbox(imgs, callbackId)
