@@ -1024,19 +1024,26 @@
             const max = 110;
 
             // Bounding
+            // if (this.x <= min) {
+            //   this.x = min;
+            // } else if (this.x >= 107) { // Workaround de 3 pixels
+            //   this.x = max;
+            // }
+            // Values
+            // if (this.x > (max / 2)) {
+            //   currentX = this.x / max
+            // } else {
+            //   currentX = (this.x / max) - 1;
+            // }
+
+            // Correction mineure - Claude COULOMBE
             if (this.x <= min) {
               this.x = min;
             } else if (this.x >= 107) { // Workaround de 3 pixels
               this.x = max;
             }
-
             // Values
-            if (this.x > (max / 2)) {
-              currentX = this.x / max
-            } else {
-              currentX = (this.x / max) - 1;
-            }
-
+            currentX = (this.x - max/2)/(max/2)
             currentValue.textContent = currentX.toFixed(2);
           }
 
