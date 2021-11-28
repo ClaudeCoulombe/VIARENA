@@ -14,6 +14,7 @@
          Couleur bordure: #3D85C6
          Remplissage: #CFE2F3FF
       */
+     
 
     * {
       /* background-color: white; */
@@ -331,7 +332,7 @@ Initial SVG elements hiding
             <rect x="5" y="5" width="103.47" height="103.47" fill="none" />
           </g><text id="precision-label" transform="translate(55.554 92.19)" font-size="28"
             font-family="Arial-BoldMT, Arial" font-weight="700">
-            <tspan x="0" y="0">0.0</tspan>
+            <tspan style="text-align:center;" x="0" y="0">100%</tspan>
           </text>
         </g>
         <g transform="translate(178.896 217.846)">
@@ -392,12 +393,14 @@ Initial SVG elements hiding
             <rect width="56.735" height="56.735" rx="10" stroke="none" />
             <rect x="2.5" y="2.5" width="51.735" height="51.735" rx="7.5" fill="none" />
           </g>
+          <text id="entree1_valeur" transform="translate(22.283 35.271)" font-size="22" font-family="ArialMT, Arial">?</text>
         </g>
         <g transform="translate(274.82 675.272)">
           <g transform="translate(0.283 0.391)" fill="#cfe2f3" stroke="#6198cc" stroke-width="5">
             <rect width="56" height="56" rx="10" stroke="none" />
             <rect x="2.5" y="2.5" width="51" height="51" rx="7.5" fill="none" />
           </g>
+          <text id="entree2_valeur" transform="translate(22.283 35.271)" font-size="22" font-family="ArialMT, Arial">?</text>
         </g>
         <g transform="translate(386.517 384.505)" class="weight-sliders">
           <g transform="translate(-0.414 20.158)" fill="#cfe2f3" stroke="#6198cc" stroke-width="1">
@@ -653,17 +656,22 @@ Initial SVG elements hiding
           <tspan x="-46.034" y="0">Donn&eacute;es</tspan>
           <tspan x="-76.715" y="27">d'entra&icirc;nement</tspan>
         </text><text transform="translate(205.104 212.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="0" y="0">Attributs</tspan>
+          <tspan x="10" y="-20">Attributs</tspan>
+          <tspan class="attributs" style="font-size:100%" x="22" y="8">[?&nbsp;,</tspan>
+          <tspan class="attributs" style="font-size:100%" x="52" y="8">&nbsp;?]</tspan>
         </text><text transform="translate(1002.104 179.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="-51" y="0">Classe ou</tspan>
-          <tspan x="-61" y="27">classe-cible</tspan>
-        </text><text transform="translate(1371.104 469.663)" font-size="23" font-family="ArialMT, Arial">
+          <tspan x="-61" y="27">classe-cible:</tspan>
+          <tspan class="vraie_classe_cible" style="font-size:100%" x="67" y="27">?</tspan>
+        </text>
+        <text transform="translate(1371.104 469.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="28" y="0">Vraie</tspan>
-          <tspan x="0" y="20">classe-cible</tspan>
-          <!-- <tspan style="font-size:200%" x="115" y="110">=</tspan> -->
+          <tspan x="0" y="20">classe-cible:</tspan>
+          <tspan class="vraie_classe_cible" style="font-size:100%" x="127" y="20">?</tspan>
         </text><text transform="translate(1371.104 609.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="-30" y="0">Pr&eacute;diction</tspan>
-          <tspan x="-40" y="27">classe-cible</tspan>
+          <tspan x="-40" y="27">classe-cible:</tspan>
+          <tspan id="prediction_classe_cible" style="font-size:100%" x="88" y="28">?</tspan>
         </text><text transform="translate(644.104 768.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="-116.342" y="0">Ajustement des poids /</tspan>
           <tspan x="-139.359" y="27">r&eacute;tropropagation de l'erreur</tspan>
@@ -681,13 +689,15 @@ Initial SVG elements hiding
           <tspan x="-39.627" y="27">d'erreur</tspan>
         </text><text id="training-data-loop-label" transform="translate(723.104 150.663)" font-size="23"
           font-family="ArialMT, Arial">
-          <tspan x="-54.333" y="0">Boucle sur</tspan>
-          <tspan x="-62.02" y="27">les donn&eacute;es</tspan>
+          <tspan x="-130" y="0">Boucle sur</tspan>
+          <tspan x="-130" y="27">les donn&eacute;es:</tspan>
+          <tspan id="index_donnees" style="font-size:100%" x="9" y="28">1</tspan>
         </text><text id="iterations-loop-label" transform="translate(1685.104 126.163)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-72.229" y="0">Boucle sur les</tspan>
           <tspan x="-109.969" y="27">it&eacute;rations ou &eacute;poques</tspan>
-          <tspan x="-76.715" y="54">d'entra&icirc;nement</tspan>
+          <tspan x="-76.715" y="54">d'entra&icirc;nement:</tspan>
+          <tspan id="nbr_iterations" style="font-size:100%" x="88" y="54">0</tspan>
         </text><text id="training-in-progress-label" transform="translate(1041.104 397.663)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-90.759" y="0">Calcul en cours...</tspan>
@@ -738,8 +748,8 @@ Initial SVG elements hiding
         <section class="iterations-container">
           <p class="section-title">Nombre d'&eacute;poques (it&eacute;rations)</p>
           <div class="slider-wrapper">
-            <input type="range" id="iterations-range" min="1" max="25" value="20" step="1" class="iterations-slider">
-            <label for="iterations-range" id="iterations-range-label">20</label>
+            <input type="range" id="iterations-range" min="1" max="30" value="20" step="1" class="iterations-slider">
+            <label for="iterations-range" id="iterations-range-label">25</label>
           </div>
         </section>
 
@@ -956,6 +966,7 @@ Initial SVG elements hiding
           afficherMessage("");
         }
       }
+
       // Prédiction
       predire(entree) {
         this.neurone.donnees_entree = entree;
@@ -974,7 +985,24 @@ Initial SVG elements hiding
         animations.moveLabels('#training-data-label', - 150, - 15);
         animations.toggleAnimationElements(true);
 
-        // Sliders
+        // Entrées
+        const entreeValeur1 = document.querySelectorAll('#entree1_valeur');
+        const entreeValeur2 = document.querySelectorAll('#entree2_valeur');
+
+        // Attributs
+        const attributs = document.querySelectorAll('.attributs');
+
+        // Indicateurs du nombre d'itérations ou époques
+        const nbr_iterations = document.querySelectorAll('#nbr_iterations');
+       
+        // Indicateur de l'index de la données du jeu de données d'entrainement
+        const index_donnees = document.querySelectorAll('#index_donnees');
+
+        // Indicateurs classe-cible
+        const vraie_classe_cible = document.querySelectorAll('.vraie_classe_cible');
+        const prediction_classe_cible = document.querySelectorAll('#prediction_classe_cible');
+
+        // Poids ou paramètres du neurone (Sliders)
         const weightSliderKnobs = document.querySelectorAll('.weight-slider-knob');
         const weightSliderValues = document.querySelectorAll('.weight-values');
 
@@ -987,12 +1015,35 @@ Initial SVG elements hiding
 
           // Pour chaque exemple de données d'entraînement, itérer sur les attributs
           for (var i_attribut = 0; i_attribut < this.attributs_entrainement.length; i_attribut++) {
+
+            // Afficher les valeurs des données à l'entrée
+            animations.animate();
+
+            animations.setTextValue(nbr_iterations[0], epoque+1);
+            animations.setTextValue(index_donnees[0], i_attribut+1); 
+            animations.setTextValue(attributs[0], this.attributs_entrainement[i_attribut][0].toFixed(0).toString());
+            animations.setTextValue(attributs[1], this.attributs_entrainement[i_attribut][1].toFixed(0).toString());
+            animations.setTextValue(entreeValeur1[0], this.attributs_entrainement[i_attribut][0].toFixed(0));
+            animations.setTextValue(entreeValeur2[0], this.attributs_entrainement[i_attribut][1].toFixed(0));
+
+            // Afficher la vraie étiquette-cible
+            animations.setTextValue(vraie_classe_cible[0], this.etiquettes_cibles[i_attribut].toFixed(0));
+            animations.setTextValue(vraie_classe_cible[1], this.etiquettes_cibles[i_attribut].toFixed(0));
+
+            await this.sleep(animations.getDuration() * 100)
+
             // Faire une prédiction - chainage avant
             var prediction = this.predire(this.attributs_entrainement[i_attribut]);
             // Mettre à jour la mesure d'exactitude
             if (this.etiquettes_cibles[i_attribut] === prediction) {
               this.exactitude += 1;
             }
+
+            // Afficher l'étiquette-cible prédite
+            animations.setTextValue(prediction_classe_cible[0], prediction.toFixed(0));
+            await this.sleep(animations.getDuration() * 100)
+            animations.setTextValue(prediction_classe_cible[0], "?");
+
             // Mettre à jour le nombre d'exemples ou données d'entraînement
             this.nombre_exemples += 1;
             // Calcul de l'erreur, perte ou coût
@@ -1016,15 +1067,15 @@ Initial SVG elements hiding
           }
           // Afficher l'exactitude après chaque époque (passage dans le jeu des données d'entraînement)
           exactitude = fixerPrecision(this.exactitude / this.nombre_exemples);
-          let message_exactitude = " Exactitude: " + exactitude + "<br>";
+          let message_exactitude = " Erreur: " + (1.0 - exactitude).toFixed(2)*100 + "%<br>";
 
           // Afficher l'exactitude à toutes les 10 époques
           // if ((epoque % 1) === 0) {
 
-          sortie_affichage_calcul.innerHTML += "Nbr &eacute;poques: " + epoque + ", ";
+          sortie_affichage_calcul.innerHTML += "Nbr &eacute;poques: " + (epoque+1) + ", ";
           sortie_affichage_calcul.innerHTML += message_exactitude;
 
-          animations.animate()
+          // animations.animate()
 
           // Slider : biais
           animations.moveSlider(
@@ -1042,8 +1093,9 @@ Initial SVG elements hiding
             this.neurone.poids_donnees_entree[1]);
           animations.setTextValue(weightSliderValues[2], this.neurone.poids_donnees_entree[1].toFixed(2));
 
-          // Precision label
-          animations.setTextValue(document.querySelector('#precision-label'), parseFloat(1.0-exactitude).toFixed(2))
+          // Precision label - affichage du calcul d'erreur
+          const affichage_erreur = ((1.0-exactitude)*100).toFixed(0)
+          animations.setTextValue(document.querySelector('#precision-label'), affichage_erreur.toString()+"%")
 
           /*
           Afin d'avoir un effet de simulation, il est important que la durée
@@ -1053,13 +1105,14 @@ Initial SVG elements hiding
 
           // }
 
-          // Arrêter l'apprentissage lorsque l'exactitude atteint 1.0
+          // Arrêter l'apprentissage lorsque l'exactitude atteint 1.0 (ou l'erreur est 0)
           if (exactitude == 1.0) {
+            animations.setTextValue(prediction_classe_cible[0], prediction.toFixed(0));
             break;
           }
 
         }
-        // Si l'exactitude est inférieure à 50% alors l'entraînement a échoué
+        // Si l'exactitude est inférieure à 100% alors l'entraînement a échoué
         if (fixerPrecision(this.exactitude / this.nombre_exemples) < 1.0) {
           this.echec_entrainement = true;
         } else {
@@ -1101,7 +1154,8 @@ Initial SVG elements hiding
           '#iterations-loop-arrow',
           '#iterations-loop-label',
           '#training-in-progress-label',
-          '#precision-label'
+          '#precision-label',
+          // '#calculations-button'
         ], { opacity: toggle ? 1 : 0 });
       }
       toggleElement(element, toggle) {
@@ -1109,10 +1163,14 @@ Initial SVG elements hiding
           opacity: toggle ? 1 : 0
         })
       }
+
       endOfAnimations(completeCallback = null) {
+        this.toggleElement('#attributes-arrow', false);
+        this.toggleElement('#calculations-arrow', false);
         this.toggleElement('#iterations-loop-arrow', false);
         this.toggleElement('#training-data-loop', false);
         this.toggleElement("#training-in-progress-label", false);
+        // this.toggleElement("#calculations-button", false);
         if (completeCallback !== null) {
           completeCallback();
         }
@@ -1218,7 +1276,7 @@ Initial SVG elements hiding
             ease: "back",
             transformOrigin: "center center",
             duration: this.duration,
-            paused: false,
+            paused: true,
           }, '<')
           // Calculations Arrow and Path
           .to("#iterations-loop-arrow", {
