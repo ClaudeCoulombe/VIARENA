@@ -652,7 +652,7 @@ Initial SVG elements hiding
           font-family="ArialMT, Arial">
           <tspan x="0" y="0">0.0</tspan>
         </text><text id="training-data-label" transform="translate(451.104 118.663)" font-size="23"
-          font-family="ArialMT, Arial">
+          font-family="ArialMT, Arial" font-weight="bold">
           <tspan x="-46.034" y="0">Donn&eacute;es</tspan>
           <tspan x="-76.715" y="27">d'entra&icirc;nement</tspan>
         </text><text transform="translate(205.104 212.663)" font-size="23" font-family="ArialMT, Arial">
@@ -660,9 +660,8 @@ Initial SVG elements hiding
           <tspan class="attributs" style="font-size:100%" x="22" y="8">[?&nbsp;,</tspan>
           <tspan class="attributs" style="font-size:100%" x="52" y="8">&nbsp;?]</tspan>
         </text><text transform="translate(1002.104 179.663)" font-size="23" font-family="ArialMT, Arial">
-          <tspan x="-51" y="0">Classe ou</tspan>
-          <tspan x="-61" y="27">classe-cible:</tspan>
-          <tspan class="vraie_classe_cible" style="font-size:100%" x="67" y="27">?</tspan>
+          <tspan x="-400" y="32">Classe-cible:</tspan>
+          <tspan class="vraie_classe_cible" style="font-size:100%" x="-264" y="32">?</tspan>
         </text>
         <text transform="translate(1371.104 469.663)" font-size="23" font-family="ArialMT, Arial">
           <tspan x="28" y="0">Vraie</tspan>
@@ -672,7 +671,7 @@ Initial SVG elements hiding
           <tspan x="-30" y="0">Pr&eacute;diction</tspan>
           <tspan x="-40" y="27">classe-cible:</tspan>
           <tspan id="prediction_classe_cible" style="font-size:100%" x="88" y="28">?</tspan>
-        </text><text transform="translate(644.104 768.663)" font-size="23" font-family="ArialMT, Arial">
+        </text><text transform="translate(644.104 768.663)" font-size="23" font-family="ArialMT, Arial" font-weight="bold">
           <tspan x="-116.342" y="0">Ajustement des poids /</tspan>
           <tspan x="-139.359" y="27">r&eacute;tropropagation de l'erreur</tspan>
         </text><text transform="translate(278.104 363.663)" font-size="23" font-family="ArialMT, Arial">
@@ -684,14 +683,14 @@ Initial SVG elements hiding
         </text><text id="neuron-label" transform="translate(984.104 388.663)" font-size="28"
           font-family="Arial-BoldMT, Arial" font-weight="700">
           <tspan x="0" y="0">Neurone</tspan>
-        </text><text transform="translate(1671.104 559.663)" font-size="23" font-family="ArialMT, Arial">
+        </text><text transform="translate(1671.104 559.663)" font-size="23" font-family="ArialMT, Arial" font-weight="bold">
           <tspan x="-31.956" y="0">Calcul</tspan>
           <tspan x="-39.627" y="27">d'erreur</tspan>
         </text><text id="training-data-loop-label" transform="translate(723.104 150.663)" font-size="23"
           font-family="ArialMT, Arial">
-          <tspan x="-130" y="0">Boucle sur</tspan>
-          <tspan x="-130" y="27">les donn&eacute;es:</tspan>
-          <tspan id="index_donnees" style="font-size:100%" x="9" y="28">1</tspan>
+          <tspan x="-160" y="-15">Boucle sur</tspan>
+          <tspan x="-160" y="11">les donn&eacute;es:</tspan>
+          <tspan id="index_donnees" style="font-size:100%" x="-22" y="12">1</tspan>
         </text><text id="iterations-loop-label" transform="translate(1685.104 126.163)" font-size="23"
           font-family="ArialMT, Arial">
           <tspan x="-72.229" y="0">Boucle sur les</tspan>
@@ -746,7 +745,7 @@ Initial SVG elements hiding
         </section>
 
         <section class="iterations-container">
-          <p class="section-title">Nombre d'&eacute;poques (it&eacute;rations)</p>
+          <p class="section-title">Nombre d'it&eacute;rations (&eacute;poques)</p>
           <div class="slider-wrapper">
             <input type="range" id="iterations-range" min="1" max="30" value="20" step="1" class="iterations-slider">
             <label for="iterations-range" id="iterations-range-label">25</label>
@@ -1072,7 +1071,7 @@ Initial SVG elements hiding
           // Afficher l'exactitude à toutes les 10 époques
           // if ((epoque % 1) === 0) {
 
-          sortie_affichage_calcul.innerHTML += "Nbr &eacute;poques: " + (epoque+1) + ", ";
+          sortie_affichage_calcul.innerHTML += "Nombre d'it&eacute;rations: " + (epoque+1) + ", ";
           sortie_affichage_calcul.innerHTML += message_exactitude;
 
           // animations.animate()
