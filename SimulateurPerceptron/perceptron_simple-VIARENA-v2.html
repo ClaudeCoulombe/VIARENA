@@ -1479,6 +1479,7 @@ Initial SVG elements hiding
       const newTrainingBtn = document.querySelector('.reset-btn');
 
       if (trainingBtn !== null) {
+        alert("trainingBtn !== null")
         trainingBtn.addEventListener('click', e => {
           toggleControlsPanel(false);
           startTraining();
@@ -1486,6 +1487,7 @@ Initial SVG elements hiding
       }
 
       if (newTrainingBtn !== null) {
+        alert("newTrainingBtn !== null")
         newTrainingBtn.addEventListener('click', e => {
 
           // Reset the calculations
@@ -1497,7 +1499,15 @@ Initial SVG elements hiding
           // Reset sliders labels values
           document.querySelectorAll('.weight-values').forEach(label => anims.setTextValue(label, "0.0"));
 
-          // Reset sliders
+          // Reset poids, attributs, classes-cibles
+          alert("Reset sliders")
+          document.querySelectorAll('.weight-values').forEach(label => anims.setTextValue(label, "0.0"));
+          document.querySelectorAll('.attributs').forEach(label => anims.setTextValue(label, "?"));
+          document.querySelectorAll('.vraie_classe_cible').forEach(label => anims.setTextValue(label, "?"));
+          document.querySelectorAll('#entree1_valeur').forEach(label => anims.setTextValue(label, "?"));
+          document.querySelectorAll('#entree2_valeur').forEach(label => anims.setTextValue(label, "?"));
+          document.querySelectorAll('#prediction_classe_cible').forEach(label => anims.setTextValue(label, "?"));
+
           const sliders = document.querySelectorAll('.weight-slider-knob');
           anims.moveSlider(sliders, 0);
 
