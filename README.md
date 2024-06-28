@@ -8,7 +8,7 @@
 
 ## Licence
 
-Copyright (C) 2020-2022 - Claude COULOMBE
+Copyright (C) 2020-2024 - Claude COULOMBE
 
 Sous licence Apache, Version 2.0 (la "Licence");
 
