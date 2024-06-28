@@ -1,5 +1,9 @@
 # Référentiel de code source pour le projet VIARENA
 
+* Pour le code du laboratoire facultatif du serveur web d'inférences EcorcIA_Web, voir: https://github.com/ClaudeCoulombe/EcorcIA_Web
+
+* Pour le code du laboratoire facultatif de l'application mobile EcorcIA pour Android, voir https://github.com/ClaudeCoulombe/EcorcIA_Application_Mobile
+
 ## Licence
 
 Copyright (C) 2020-2022 - Claude COULOMBE
